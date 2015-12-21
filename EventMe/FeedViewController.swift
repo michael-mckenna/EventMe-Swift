@@ -25,7 +25,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var currentUser = PFUser.currentUser()
     var displayAble = true
     
-        override func viewDidLoad() {
+    override func viewDidLoad() {
+
             super.viewDidLoad()
             self.tabBarItem.image = UIImage(named: "tabIcon.png")
             
@@ -33,12 +34,17 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             self.tableView.dataSource = self
             self.tableView.delegate = self
             self.tableView.rowHeight = 65
-            
+        
             manager = CLLocationManager()
             manager.delegate = self
             manager.desiredAccuracy = kCLLocationAccuracyBest
             manager.requestWhenInUseAuthorization()
             manager.startUpdatingLocation()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        //searchEvents()
+
     }
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -106,6 +112,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         let cellToReturn = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! FeedCustomCell
         var object = eventsArray[indexPath.row]
         cellToReturn.nameLabel.text = object["eventName"] as! String
+
         return cellToReturn
     }
     
@@ -113,7 +120,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         
         return indexPath
-        
     }
 
     
@@ -130,53 +136,26 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
         //taking elements from EventDetailViewController and putting them into DestinationViewController object
         if(segue.identifier == "detailSegue") {
             if let destination = segue.destinationViewController as? EventDetailViewController {
-                if let eventIndex = self.tableView.indexPathForCell(sender as! UITableViewCell) {
+                if let eventIndex = self.tableView.indexPathForSelectedRow {
                     var object = self.eventsArray[eventIndex.row]
-                    
+
                     destination.nameText = object["eventName"] as! String
                     destination.descText = object["eventDescription"] as! String
                     
                     //breaking down coordinates from PFGeoPoint into a string address using CLGeocoder
                     var location = object["eventLocation"]
-                    if location != nil {
                     var convLocation: CLLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
-                    CLGeocoder().reverseGeocodeLocation(convLocation, completionHandler: { (placemarks, error) -> Void in
-                        if error == nil {
-                            if let p = placemarks?[0] {
-                                var subThoroughfare: String = ""
-                                if p.subThoroughfare != nil {
-                                    subThoroughfare = p.subThoroughfare!
-                                    //breaks down the different parts of an address. See documentation for each component
-                                    destination.addressText = "\(subThoroughfare) \(p.thoroughfare!) \n \(p.locality!), \(p.administrativeArea!) \(p.postalCode!)"
-                                }
-        
-                            }
-                        }
-                    })
-                    }
+                    destination.location = convLocation
                     
                     //extracting image data from object
-                    if let userImageFile = object["eventImage"] as? PFFile {
-                    userImageFile.getDataInBackgroundWithBlock {
-                        (imageData: NSData?, error: NSError?) -> Void in
-                        if error == nil {
-                            if let imageData = imageData {
-                                destination.image = UIImage(data:imageData)
-                            } else {
-                                print("There was no image")
-                            }
-                        }
-                    }
+                    destination.userImageObject = object
                 }
-                
             }
         }
     }
 }
-    
- 
 
-}
