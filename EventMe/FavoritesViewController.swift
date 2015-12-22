@@ -87,37 +87,11 @@ class FavoritesViewController: UIViewController {
                     
                     //breaking down coordinates from PFGeoPoint into a string address using CLGeocoder
                     var location = object["eventLocation"]
-                    if location != nil {
-                        var convLocation: CLLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
-                        CLGeocoder().reverseGeocodeLocation(convLocation, completionHandler: { (placemarks, error) -> Void in
-                            if error == nil {
-                                if let p = placemarks?[0] {
-                                    var subThoroughfare: String = ""
-                                    if p.subThoroughfare != nil {
-                                        subThoroughfare = p.subThoroughfare!
-                                        //breaks down the different parts of an address. See documentation for each component
-                                        destination.addressText = "\(subThoroughfare) \(p.thoroughfare!) \n \(p.locality!), \(p.administrativeArea!) \(p.postalCode!)"
-                                    }
-                                    
-                                }
-                            }
-                        })
-                    }
+                    var convLocation: CLLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
+                    destination.location = convLocation
                     
-                    //extracting image data from object
-                    if let userImageFile = object["eventImage"] as? PFFile {
-                        userImageFile.getDataInBackgroundWithBlock {
-                            (imageData: NSData?, error: NSError?) -> Void in
-                            if error == nil {
-                                if let imageData = imageData {
-                                    destination.image = UIImage(data:imageData)
-                                } else {
-                                    print("There was no image")
-                                }
-                            }
-                        }
-                    }
-                    
+                    //copying object
+                    destination.userImageObject = object
                 }
             }
         }

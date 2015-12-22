@@ -11,6 +11,11 @@ import UIKit
 class FeedCustomCell: UITableViewCell {
     
     @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var monthAndDay: UILabel!
+    @IBOutlet weak var dayLabel: UILabel!
+    @IBOutlet weak var votesLabel: UILabel!
+    @IBOutlet weak var upArrow: UIButton!
+    @IBOutlet weak var downArrow: UIButton!
     
     override func awakeFromNib() {
         super.awakeFromNib()

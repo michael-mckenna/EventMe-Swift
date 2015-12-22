@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Navigation Controller-->
@@ -296,56 +297,65 @@
                         <rect key="frame" x="0.0" y="44" width="375" height="623"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="51" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="F7Z-Zw-BRj">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="566"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" delaysContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="112" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="F7Z-Zw-BRj">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="574"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <color key="separatorColor" red="0.0" green="0.0" blue="0.42745098040000001" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="separatorColor" red="0.20784313730000001" green="0.35686274509999999" blue="0.71764705880000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" rowHeight="80" id="E5R-cP-7WJ" customClass="FeedCustomCell" customModule="EventMe">
-                                        <rect key="frame" x="0.0" y="28" width="375" height="80"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" rowHeight="112" id="E5R-cP-7WJ" customClass="FeedCustomCell" customModule="EventMe">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="112"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="E5R-cP-7WJ" id="VWx-hv-Scf">
-                                            <rect key="frame" x="0.0" y="0.0" width="342" height="79"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="342" height="111"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eUG-Pp-5pb">
-                                                    <rect key="frame" x="0.0" y="0.0" width="77" height="45"/>
-                                                    <color key="backgroundColor" red="0.61568627450000002" green="0.60784313729999995" blue="0.75294117650000003" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Mon" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eUG-Pp-5pb">
+                                                    <rect key="frame" x="0.0" y="0.0" width="77" height="54"/>
+                                                    <color key="backgroundColor" red="0.20784313730000001" green="0.35686274509999999" blue="0.71764705880000002" alpha="0.44768318969999998" colorSpace="calibratedRGB"/>
+                                                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="20"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rT6-Ug-uqG">
-                                                    <rect key="frame" x="0.0" y="43" width="77" height="36"/>
-                                                    <color key="backgroundColor" red="0.61568627450000002" green="0.60784313729999995" blue="0.75294117650000003" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="July 22" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rT6-Ug-uqG">
+                                                    <rect key="frame" x="0.0" y="53" width="77" height="58"/>
+                                                    <color key="backgroundColor" red="0.20784313725490197" green="0.35686274509803922" blue="0.71764705882352942" alpha="0.4476831896551724" colorSpace="calibratedRGB"/>
+                                                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pi1-yY-tGq">
-                                                    <rect key="frame" x="308" y="53" width="26" height="24"/>
-                                                    <state key="normal" image="down.png"/>
+                                                    <rect key="frame" x="304" y="79" width="34" height="32"/>
+                                                    <state key="normal" image="arrow_down.png"/>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3vp-09-B8R">
-                                                    <rect key="frame" x="308" y="0.0" width="26" height="24"/>
-                                                    <state key="normal" image="up.png"/>
-                                                </button>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="9999" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uF8-7e-0qI">
-                                                    <rect key="frame" x="300" y="29" width="42" height="21"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Random Placeholder Text" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uk0-eD-iyE">
+                                                    <rect key="frame" x="80" y="45" width="212" height="21"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                                    <color key="textColor" red="0.20784313730000001" green="0.35686274509999999" blue="0.71764705880000002" alpha="0.44768318969999998" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Random Placeholder Text" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uk0-eD-iyE">
-                                                    <rect key="frame" x="85" y="29" width="212" height="21"/>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3vp-09-B8R">
+                                                    <rect key="frame" x="301" y="0.0" width="41" height="32"/>
+                                                    <state key="normal" image="arrow_up.png"/>
+                                                </button>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="9" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uF8-7e-0qI">
+                                                    <rect key="frame" x="316" y="45" width="11" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="textColor" red="0.20784313730000001" green="0.35686274509999999" blue="0.71764705880000002" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="bottomMargin" secondItem="rT6-Ug-uqG" secondAttribute="bottom" constant="-8" id="8fR-5k-FtB"/>
+                                            </constraints>
                                         </tableViewCellContentView>
                                         <connections>
+                                            <outlet property="dayLabel" destination="eUG-Pp-5pb" id="CZQ-pa-VID"/>
+                                            <outlet property="downArrow" destination="pi1-yY-tGq" id="Ztq-kn-ItK"/>
+                                            <outlet property="monthAndDay" destination="rT6-Ug-uqG" id="VHR-3k-BeY"/>
                                             <outlet property="nameLabel" destination="uk0-eD-iyE" id="p8N-sj-wwJ"/>
+                                            <outlet property="upArrow" destination="3vp-09-B8R" id="cdt-nW-tu0"/>
+                                            <outlet property="votesLabel" destination="uF8-7e-0qI" id="Hon-Xc-SvR"/>
                                             <segue destination="cqV-UA-FUr" kind="push" identifier="detailSegue" id="gyb-tn-1XI"/>
                                         </connections>
                                     </tableViewCell>
@@ -413,7 +423,7 @@
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vak-7V-G3p">
                                 <rect key="frame" x="151" y="539" width="72" height="30"/>
-                                <state key="normal" title="Log out"/>
+                                <state key="normal" title="Text label"/>
                                 <connections>
                                     <action selector="logOut:" destination="pwa-pv-73c" eventType="touchUpInside" id="VVH-Pf-y8w"/>
                                 </connections>
@@ -424,6 +434,7 @@
                     <tabBarItem key="tabBarItem" systemItem="more" id="zTk-AG-77B"/>
                     <navigationItem key="navigationItem" id="Fzi-Pa-t6Z"/>
                     <connections>
+                        <outlet property="logButton" destination="vak-7V-G3p" id="fAi-0N-qkq"/>
                         <segue destination="8yH-pR-PPY" kind="modal" identifier="toLoginSegue" id="WkL-Lr-ubS"/>
                     </connections>
                 </viewController>
@@ -548,9 +559,9 @@
         </scene>
     </scenes>
     <resources>
-        <image name="down.png" width="32" height="32"/>
+        <image name="arrow_down.png" width="32" height="32"/>
+        <image name="arrow_up.png" width="32" height="32"/>
         <image name="tabIcon.png" width="25" height="25"/>
-        <image name="up.png" width="32" height="32"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="GIY-iM-IrW"/>
