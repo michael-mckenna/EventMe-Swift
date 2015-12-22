@@ -24,23 +24,37 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var point = PFGeoPoint()
     var currentUser = PFUser.currentUser()
     var displayAble = true
+    var refresher: UIRefreshControl!
     
     override func viewDidLoad() {
-
             super.viewDidLoad()
+        
             self.tabBarItem.image = UIImage(named: "tabIcon.png")
             self.navigationController?.navigationBar.translucent = false
-            
-            //rgb values of desired theme color: UIColor(red: 0.32, green: 0.32, blue: 1.26, alpha: 0.35
+        
+            //refresher to load events
+            self.refresher = UIRefreshControl()
+            self.refresher.attributedTitle = NSAttributedString(string: "Pull to refresh")
+            self.refresher.addTarget(self, action: "refresh", forControlEvents: UIControlEvents.ValueChanged)
+        
+            //table view elements
             self.tableView.dataSource = self
             self.tableView.delegate = self
             self.tableView.rowHeight = 112
+            self.tableView.addSubview(refresher)
         
+            //location manager initialization
             manager = CLLocationManager()
             manager.delegate = self
             manager.desiredAccuracy = kCLLocationAccuracyBest
             manager.requestWhenInUseAuthorization()
             manager.startUpdatingLocation()
+        
+    }
+    
+    func refresh() {
+        displayAble = true
+        manager.startUpdatingLocation()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -71,7 +85,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     func searchEvents() {
-        
         query.addDescendingOrder("votes")
         query.whereKey("eventLocation", nearGeoPoint: point, withinMiles: 5)
         query.findObjectsInBackgroundWithBlock { (objects: [PFObject]?, error: NSError?) -> Void in
@@ -81,9 +94,9 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             } else {
                 self.eventsArray = objects!
                 self.tableView.reloadData()
+                self.refresher.endRefreshing()
             }
         }
-        self.tableView.reloadData()
     }
     
     override func didReceiveMemoryWarning() {
@@ -126,14 +139,14 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         return indexPath
     }
 
-    
-    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+    //deletes row. Probably won't implement this in final version
+    /*func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         
-        if editingStyle == UITableViewCellEditingStyle.Delete {
+        if editingStyle == UITableViewCellEditingStyle.Delete{
             eventsArray.removeAtIndex(indexPath.row)
             self.tableView.reloadData()
         }
-    }
+    }*/
     
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         cell.separatorInset = UIEdgeInsetsZero
@@ -166,5 +179,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             }
         }
     }
+
+    
 }
 

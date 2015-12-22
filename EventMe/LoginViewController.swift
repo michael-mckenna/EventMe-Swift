@@ -9,7 +9,7 @@
 import UIKit
 import Parse
 
-class LoginViewController: UIViewController {
+class LoginViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var username: UITextField!
     @IBOutlet weak var password: UITextField!
@@ -17,6 +17,9 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        username.delegate = self
+        password.delegate = self
         
         if((PFUser.currentUser()) != nil) {
             self.performSegueWithIdentifier("loginToFeed", sender: self)
@@ -54,6 +57,18 @@ class LoginViewController: UIViewController {
         self.performSegueWithIdentifier("loginToFeed", sender: self)
     }
 
+    
+    //closes keyboard when user touches outside of the keyboard
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    //closes keyboard when user taps the return key
+    func textFieldShouldReturn(textField: UITextField) -> Bool // called when 'return' key pressed.
+    {
+        textField.resignFirstResponder()
+        return true;
+    }
 
 }
 
