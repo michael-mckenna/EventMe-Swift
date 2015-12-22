@@ -10,7 +10,7 @@ import Parse
 import MapKit
 import CoreLocation
 
-class CreateEventViewController: UIViewController, CLLocationManagerDelegate {
+class CreateEventViewController: UIViewController, CLLocationManagerDelegate, UITextViewDelegate, UITextFieldDelegate {
     
     var manager: CLLocationManager!
     
@@ -24,6 +24,11 @@ class CreateEventViewController: UIViewController, CLLocationManagerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        nameInput.delegate = self
+        descriptionInput.delegate = self
+        tagsInput.delegate = self
+        
         // Do any additional setup after loading the view, typically from a nib.
         manager = CLLocationManager()
         manager.delegate = self
@@ -163,6 +168,19 @@ class CreateEventViewController: UIViewController, CLLocationManagerDelegate {
             }
         }
         
+    }
+    
+    
+    //closes keyboard when user touches outside of the keyboard
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    //closes keyboard when user taps the return key
+    func textFieldShouldReturn(textField: UITextField) -> Bool
+    {
+        textField.resignFirstResponder()
+        return true;
     }
     
 

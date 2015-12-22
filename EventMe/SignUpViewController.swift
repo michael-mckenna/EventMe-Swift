@@ -9,7 +9,7 @@
 import UIKit
 import Parse
 
-class SignUpViewController: UIViewController {
+class SignUpViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet weak var username: UITextField!
     @IBOutlet weak var password: UITextField!
@@ -17,6 +17,8 @@ class SignUpViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        username.delegate = self
+        password.delegate = self
     }
     
     override func didReceiveMemoryWarning() {
@@ -41,6 +43,19 @@ class SignUpViewController: UIViewController {
                 self.performSegueWithIdentifier("signUpToFeed", sender: self)
             }
         }
+    }
+    
+    
+    //closes keyboard when user touches outside of the keyboard
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    //closes keyboard when user taps the return key
+    func textFieldShouldReturn(textField: UITextField) -> Bool // called when 'return' key pressed.
+    {
+        textField.resignFirstResponder()
+        return true;
     }
     
 }
