@@ -48,6 +48,25 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
+    override func shouldPerformSegueWithIdentifier(identifier: String, sender: AnyObject?) -> Bool {
+        if identifier == "loginToFeed" {
+            if username.text!.isEmpty || password.text!.isEmpty {
+                let emptyText = UIAlertView()
+                emptyText.title = "Empty Username"
+                emptyText.message = "Username field is empty"
+                emptyText.addButtonWithTitle("OK")
+                emptyText.show()
+            
+                return false
+            } else {
+                return true
+            }
+            
+       }
+        
+        return true
+    }
+    
     @IBAction func signUp(sender: AnyObject) {
         self.performSegueWithIdentifier("signUpSegue", sender: self)
     }
