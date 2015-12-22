@@ -29,11 +29,12 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
             super.viewDidLoad()
             self.tabBarItem.image = UIImage(named: "tabIcon.png")
+            self.navigationController?.navigationBar.translucent = false
             
             //rgb values of desired theme color: UIColor(red: 0.32, green: 0.32, blue: 1.26, alpha: 0.35
             self.tableView.dataSource = self
             self.tableView.delegate = self
-            self.tableView.rowHeight = 65
+            self.tableView.rowHeight = 112
         
             manager = CLLocationManager()
             manager.delegate = self
@@ -111,7 +112,10 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
        
         let cellToReturn = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! FeedCustomCell
         var object = eventsArray[indexPath.row]
+        
+        cellToReturn.accessoryType = UITableViewCellAccessoryType.None
         cellToReturn.nameLabel.text = object["eventName"] as! String
+        cellToReturn.votesLabel.text = String(object["votes"])
 
         return cellToReturn
     }
@@ -129,6 +133,11 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             eventsArray.removeAtIndex(indexPath.row)
             self.tableView.reloadData()
         }
+    }
+    
+    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        cell.separatorInset = UIEdgeInsetsZero
+        cell.layoutMargins = UIEdgeInsetsZero
     }
     
     @IBAction func addEvent(sender: AnyObject) {

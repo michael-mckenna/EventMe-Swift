@@ -12,9 +12,18 @@ import Parse
 
 class SettingsViewController: UIViewController {
     
+    @IBOutlet weak var logButton: UIButton!
+    
+    var currentUser = PFUser.currentUser()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if currentUser != nil {
+            logButton.setTitle("Log Out", forState: .Normal)
+        } else {
+            logButton.setTitle("Log In", forState: .Normal)
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -23,7 +32,10 @@ class SettingsViewController: UIViewController {
     }
     
     @IBAction func logOut(sender: AnyObject) {
-        PFUser.logOut()
+        if (currentUser != nil) {
+            PFUser.logOut()
+        }
+        
         self.performSegueWithIdentifier("toLoginSegue", sender: self)
     }
     

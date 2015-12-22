@@ -51,7 +51,7 @@ class EventDetailViewController: UIViewController {
         self.addressLabel.text = addressText
         
         //image
-        var userImageFile = self.userImageObject["eventImage"] as! PFFile
+        if let userImageFile = self.userImageObject["eventImage"] as? PFFile {
            userImageFile.getDataInBackgroundWithBlock {
             (imageData: NSData?, error: NSError?) -> Void in
             if error == nil {
@@ -64,6 +64,7 @@ class EventDetailViewController: UIViewController {
                     print("There was no image")
                 }
             }
+        }
         }
 
     }
