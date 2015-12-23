@@ -214,7 +214,7 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="j8w-Xh-zaf">
-                                <rect key="frame" x="20" y="136" width="335" height="80"/>
+                                <rect key="frame" x="20" y="136" width="335" height="52"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences" enablesReturnKeyAutomatically="YES"/>
@@ -239,6 +239,22 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Add image:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="urW-JP-QGO">
+                                <rect key="frame" x="20" y="195" width="87" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M4J-QX-K2p">
+                                <rect key="frame" x="144" y="191" width="46" height="30"/>
+                                <state key="normal" title="Button"/>
+                                <connections>
+                                    <action selector="showAction:" destination="MfG-Cc-eWI" eventType="touchUpInside" id="tvL-W8-v9z"/>
+                                </connections>
+                            </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WCb-jH-Tsx">
+                                <rect key="frame" x="257" y="188" width="73" height="35"/>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -256,6 +272,7 @@
                     <connections>
                         <outlet property="addressLabel" destination="pEM-Ze-rN2" id="9wg-5A-tAq"/>
                         <outlet property="descriptionInput" destination="j8w-Xh-zaf" id="ask-a2-nuT"/>
+                        <outlet property="imageView" destination="WCb-jH-Tsx" id="CUh-UX-HhJ"/>
                         <outlet property="map" destination="98e-nY-9zU" id="5bz-wG-NPn"/>
                         <outlet property="nameInput" destination="Oto-MM-GYY" id="BAn-kD-aMr"/>
                         <outlet property="tagsInput" destination="gL1-n4-e57" id="Mpz-wS-csb"/>
