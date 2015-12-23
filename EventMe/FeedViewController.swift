@@ -10,8 +10,9 @@
 import UIKit
 import Parse
 import CoreLocation
+import CoreData
 
-class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CLLocationManagerDelegate {
+class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CLLocationManagerDelegate, NSFetchedResultsControllerDelegate  {
     
     @IBOutlet weak var eventItem: UITabBarItem!
     @IBOutlet weak var tableView: UITableView!
@@ -28,30 +29,47 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
     var strLabel = UILabel()
     var messageFrame = UIView()
+    var managedObjectContext: NSManagedObjectContext? = nil
     
     override func viewDidLoad() {
-            super.viewDidLoad()
+        super.viewDidLoad()
         
-            self.tabBarItem.image = UIImage(named: "tabIcon.png")
-            self.navigationController?.navigationBar.translucent = false
+        self.tabBarItem.image = UIImage(named: "tabIcon.png")
+        self.navigationController?.navigationBar.translucent = false
         
-            //refresher to load events
-            self.refresher = UIRefreshControl()
-            self.refresher.attributedTitle = NSAttributedString(string: "Pull to refresh")
-            self.refresher.addTarget(self, action: "refresh", forControlEvents: UIControlEvents.ValueChanged)
+        //refresher to load events
+        self.refresher = UIRefreshControl()
+        self.refresher.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        self.refresher.addTarget(self, action: "refresh", forControlEvents: UIControlEvents.ValueChanged)
         
-            //table view elements
-            self.tableView.dataSource = self
-            self.tableView.delegate = self
-            self.tableView.rowHeight = 112
-            self.tableView.addSubview(refresher)
+        //table view elements
+        self.tableView.dataSource = self
+        self.tableView.delegate = self
+        self.tableView.rowHeight = 112
+        self.tableView.addSubview(refresher)
+    
+        //location manager initialization
+        manager = CLLocationManager()
+        manager.delegate = self
+        manager.desiredAccuracy = kCLLocationAccuracyBest
+        manager.requestWhenInUseAuthorization()
+        manager.startUpdatingLocation()
         
-            //location manager initialization
-            manager = CLLocationManager()
-            manager.delegate = self
-            manager.desiredAccuracy = kCLLocationAccuracyBest
-            manager.requestWhenInUseAuthorization()
-            manager.startUpdatingLocation()
+        // setting up required core data components
+        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let context : NSManagedObjectContext = appDel.managedObjectContext
+        let request = NSFetchRequest(entityName: "Events")
+        request.returnsObjectsAsFaults = false
+        do {
+            let results = try context.executeFetchRequest(request)
+            if results.count == 0 {
+                let newObject: NSManagedObject = NSEntityDescription.insertNewObjectForEntityForName("Events", inManagedObjectContext: context)
+                newObject.setValue("turd nugget", forKey: "objectId")
+            }
+        } catch {
+            
+        }
+
         
     }
     
@@ -97,9 +115,43 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 // There was an error
                 print("error")
             } else {
+                
+                self.eventsArray = objects!
+                
+                // setting up required core data components
+                let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+                let context : NSManagedObjectContext = appDel.managedObjectContext
+                let request = NSFetchRequest(entityName: "Events")
+                request.returnsObjectsAsFaults = false
+                
+                for var i = 0; i < self.eventsArray.count; ++i {
+                    request.predicate = NSPredicate(format: "objectId = %@", self.eventsArray[i].objectId!)
+                    
+                    do {
+                        let results = try context.executeFetchRequest(request)
+                        if results.count == 0 {
+                            
+                            //if there is no core data that has the event's id, we make one
+                            let newObject = NSEntityDescription.insertNewObjectForEntityForName("Events", inManagedObjectContext: context)
+                            newObject.setValue(self.eventsArray[i].objectId, forKey: "objectId")
+                            newObject.setValue(false, forKey: "upVoted")
+                            newObject.setValue(false, forKey: "downVoted")
+                            print("objectId")
+                            do {
+                                try context.save()
+                            } catch {
+                                print("Couldn't save to core data")
+                            }
+
+                        }
+                    } catch {
+                        print("something went wrong")
+                    }
+                }
+                
+                
                 self.activityIndicator.stopAnimating()
                 self.messageFrame.removeFromSuperview()
-                self.eventsArray = objects!
                 self.tableView.reloadData()
                 self.refresher.endRefreshing()
             }
@@ -151,10 +203,10 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
        
         let cellToReturn = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! FeedCustomCell
-        var object = eventsArray[indexPath.row]
+        let object = eventsArray[indexPath.row]
         
         cellToReturn.accessoryType = UITableViewCellAccessoryType.None
-        cellToReturn.nameLabel.text = object["eventName"] as! String
+        cellToReturn.nameLabel.text = (object["eventName"] as! String)
         cellToReturn.votesLabel.text = String(object["votes"])
         
         //upVote functionality
@@ -169,23 +221,129 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     func upVote(sender: AnyObject) {
-        var button: UIButton = sender as! UIButton
-        var object = self.eventsArray[button.tag]
-        object["votes"] = object["votes"] as! Int + 1
         
-        var indexPath = NSIndexPath(forRow: button.tag, inSection:0)
-        object.saveInBackground()
-        self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Top)
+        
+        let button: UIButton = sender as! UIButton
+        let object = self.eventsArray[button.tag]
+        
+        // setting up required core data components
+        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let context : NSManagedObjectContext = appDel.managedObjectContext
+        let request = NSFetchRequest(entityName: "Events")
+        request.returnsObjectsAsFaults = false
+        request.predicate = NSPredicate(format: "objectId = %@", object.objectId!)
+        
+        do {
+            let result = try context.executeFetchRequest(request)
+            for value in result as! [NSManagedObject] {
+                
+                //check if there is a nil value
+                if value.valueForKey("upVoted") as? Bool != nil {
+                    //check if the bool value is false
+                    if value.valueForKey("upVoted") as! Bool == false {
+                        
+                    if value.valueForKey("downVoted") as? Bool != nil {
+                        if value.valueForKey("downVoted") as! Bool == true {
+                            object["votes"] = object["votes"] as! Int + 2
+                        } else {
+                           object["votes"] = object["votes"] as! Int + 1
+                        }
+                    }
+                        
+                    value.setValue(false, forKey: "downVoted")
+                    value.setValue(true, forKey: "upVoted")
+                    do {
+                        try context.save()
+                    } catch {
+                        print("Couldn't save changes")
+                    }
+                        
+                    object.saveInBackground()
+    
+                    let indexPath = NSIndexPath(forRow: button.tag, inSection:0)
+                    self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Top)
+                    } else {
+                        value.setValue(false, forKey: "upVoted")
+                        do {
+                            try context.save()
+                        } catch {
+                            print("Couldn't save changes")
+                        }
+                        
+                        object["votes"] = object["votes"] as! Int - 1
+                        object.saveInBackground()
+                        
+                        let indexPath = NSIndexPath(forRow: button.tag, inSection:0)
+                        self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Top)
+                    }
+                }
+            }
+        } catch {
+            print("Something went wrong")
+        }
+
     }
     
     func downVote(sender: AnyObject) {
+        
         var button: UIButton = sender as! UIButton
         var object = self.eventsArray[button.tag]
-        object["votes"] = object["votes"] as! Int - 1
         
-        var indexPath = NSIndexPath(forRow: button.tag, inSection: 0)
-        object.saveInBackground()
-        self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Bottom)
+        // setting up required core data components
+        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let context : NSManagedObjectContext = appDel.managedObjectContext
+        let request = NSFetchRequest(entityName: "Events")
+        request.returnsObjectsAsFaults = false
+        request.predicate = NSPredicate(format: "objectId = %@", object.objectId!)
+        
+        do {
+            let result = try context.executeFetchRequest(request)
+            for value in result as! [NSManagedObject] {
+                if value.valueForKey("downVoted") as? Bool != nil {
+                    if value.valueForKey("downVoted") as! Bool == false {
+                    
+                    // if the user already upvoted, we want to make down vote decrease the vote count by 2 (so it's one less from the original value)
+                    if value.valueForKey("upVoted") as? Bool != nil {
+                        if value.valueForKey("upVoted") as! Bool == true {
+                            object["votes"] = object["votes"] as! Int - 2
+                        } else {
+                            object["votes"] = object["votes"] as! Int - 1
+                        }
+                    }
+                        
+                    value.setValue(true, forKey: "downVoted")
+                    value.setValue(false, forKey: "upVoted")
+            
+                    do {
+                        try context.save()
+                    } catch {
+                        print("Error saving changes")
+                    }
+                        
+                    object.saveInBackground()
+                    
+                    var indexPath = NSIndexPath(forRow: button.tag, inSection:0)
+                    self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Top)
+                    } else {
+                        value.setValue(false, forKey: "downVoted")
+                        do {
+                            try context.save()
+                        } catch {
+                            print("Couldn't save changes")
+                        }
+                        
+                        object["votes"] = object["votes"] as! Int + 1
+                        object.saveInBackground()
+                        
+                        let indexPath = NSIndexPath(forRow: button.tag, inSection:0)
+                        self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Top)
+                    }
+
+                }
+            }
+        } catch {
+            print("Something went wrong")
+        }
         
     }
     
