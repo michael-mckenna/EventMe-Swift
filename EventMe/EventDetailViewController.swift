@@ -9,8 +9,9 @@
 import Foundation
 import UIKit
 import Parse
+import CoreData
 
-class EventDetailViewController: UIViewController {
+class EventDetailViewController: UIViewController, NSFetchedResultsControllerDelegate {
     
     @IBOutlet weak var eventName: UILabel!
     @IBOutlet weak var eventImage: UIImageView!
@@ -30,33 +31,69 @@ class EventDetailViewController: UIViewController {
     var passedObject = PFObject(className: "Event")
     var currentUser = PFUser.currentUser()
     var favorited = false
+    var managedObjectContext: NSManagedObjectContext? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         if currentUser != nil {
             var favoritesRelation = currentUser?.relationForKey("favoriteEvents")
-            
+   
             let query = favoritesRelation?.query()
             
             query?.findObjectsInBackgroundWithBlock({ (objects: [PFObject]?, error: NSError?) -> Void in
                 if error == nil {
+                    print("no error")
                     //checks if returns array contains the event; if it does, this button removes that relation. If not, it adds the relation
+                    if(objects!.count > 0) {
                     for object in objects! {
+                        print("non empty array")
                         if object.objectId == self.passedObject.objectId {
-                            self.favorited = true
+                            print("favorite found")
                             self.yellowFavorite.hidden = false
                             self.favoriteStarButton.hidden = true
+                            return
                         } else {
-                            self.favorited = false
+                            print("favorite not found")
                             self.yellowFavorite.hidden = true
                             self.favoriteStarButton.hidden = false
                         }
+                    }
+                    } else {
+                        print("empty array")
+                        self.yellowFavorite.hidden = true
+                        self.favoriteStarButton.hidden = false
                     }
                 } else {
                     print("Error finding favorites")
                 }
             })
+        } else {
+            // setting up required core data components
+            let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            let context : NSManagedObjectContext = appDel.managedObjectContext
+            let request = NSFetchRequest(entityName: "Events")
+            request.returnsObjectsAsFaults = false
+            request.predicate = NSPredicate(format: "objectId = %@", self.passedObject.objectId!)
+            do {
+                let result = try context.executeFetchRequest(request)
+                for value in result as! [NSManagedObject] {
+                    if result.count > 0 {
+                        if value.valueForKey("favorited") as! Bool == true {
+                            print("favorite found")
+                            self.yellowFavorite.hidden = false
+                            self.favoriteStarButton.hidden = true
+                            return
+                        } else {
+                            print("favorite not found")
+                            self.yellowFavorite.hidden = true
+                            self.favoriteStarButton.hidden = false
+                        }
+                    } 
+                }
+            } catch {
+                print("error retrieving object from core data")
+            }
         }
         
         CLGeocoder().reverseGeocodeLocation(location, completionHandler: { (placemarks, error) -> Void in
@@ -99,17 +136,77 @@ class EventDetailViewController: UIViewController {
     
     @IBAction func starTapped(sender: AnyObject) {
         if yellowFavorite.hidden == true {
-            print("White tapped")
+            if currentUser != nil {
+                print("White tapped")
+                var relation = currentUser?.relationForKey("favoriteEvents")
+                relation?.addObject(self.passedObject)
+                self.currentUser?.saveInBackground()
+                yellowFavorite.hidden = false
+                favoriteStarButton.hidden = true
+            } else {
+                 print("White tapped")
+                // setting up required core data components
+                let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+                let context : NSManagedObjectContext = appDel.managedObjectContext
+                let request = NSFetchRequest(entityName: "Events")
+                request.returnsObjectsAsFaults = false
+                request.predicate = NSPredicate(format: "objectId = %@", self.passedObject.objectId!)
+                do {
+                    let result = try context.executeFetchRequest(request)
+                    for value in result as! [NSManagedObject] {
+                        //setting the value for the object in core data as favorited
+                        value.setValue(true, forKey: "favorited")
+                        do {
+                            try context.save()
+                            yellowFavorite.hidden = false
+                            favoriteStarButton.hidden = true
+                        } catch {
+                            print("couldn't save core data")
+                        }
+                    }
+                } catch {
+                    print("error retrieving core data")
+                }
+                
+            }
         }
     }
     
     @IBAction func yellowTapped(sender: AnyObject) {
+        if currentUser != nil {
         if favoriteStarButton.hidden == true {
             print("yellow tapped")
+            var relation = currentUser?.relationForKey("favoriteEvents")
+            relation?.removeObject(self.passedObject)
+            self.currentUser?.saveInBackground()
+            yellowFavorite.hidden = true
+            favoriteStarButton.hidden = false
+            }
+        } else {
+        print("yellow tapped")
+        // setting up required core data components
+        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let context : NSManagedObjectContext = appDel.managedObjectContext
+        let request = NSFetchRequest(entityName: "Events")
+        request.returnsObjectsAsFaults = false
+        request.predicate = NSPredicate(format: "objectId = %@", self.passedObject.objectId!)
+        do {
+            let result = try context.executeFetchRequest(request)
+            for value in result as! [NSManagedObject] {
+                value.setValue(false, forKey: "favorited")
+                do {
+                    try context.save()
+                    yellowFavorite.hidden = true
+                    favoriteStarButton.hidden = false
+                } catch {
+                    print("couldn't save core data")
+                }
+            }
+        } catch {
+            print("error retrieving core data")
         }
     }
-    
-
+}
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

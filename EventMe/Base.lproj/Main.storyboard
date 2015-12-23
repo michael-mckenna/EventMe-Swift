@@ -549,27 +549,37 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="k1H-iY-zJy">
-                                <rect key="frame" x="289" y="541" width="66" height="69"/>
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="k1H-iY-zJy">
+                                <rect key="frame" x="148" y="529" width="66" height="69"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="69" id="ldi-7j-g0b"/>
+                                    <constraint firstAttribute="width" constant="66" id="ul7-Vt-Zzo"/>
+                                </constraints>
                                 <state key="normal" image="favoriteStarYellow.png"/>
                                 <connections>
                                     <action selector="starTapped:" destination="cqV-UA-FUr" eventType="touchUpInside" id="Rqr-Fk-V5H"/>
                                     <action selector="yellowTapped:" destination="cqV-UA-FUr" eventType="touchUpInside" id="f5r-Cu-rlx"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6hs-KR-k7I">
-                                <rect key="frame" x="289" y="541" width="66" height="69"/>
-                                <state key="normal" image="favoriteStar.png"/>
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NGp-Od-ynh">
+                                <rect key="frame" x="148" y="529" width="66" height="69"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="69" id="7PM-qE-juN"/>
+                                    <constraint firstAttribute="width" constant="66" id="Myy-C3-8X3"/>
+                                </constraints>
+                                <state key="normal" backgroundImage="favoriteStar.png"/>
                                 <connections>
-                                    <action selector="starTapped:" destination="cqV-UA-FUr" eventType="touchUpInside" id="gbh-CB-Orh"/>
+                                    <action selector="starTapped:" destination="cqV-UA-FUr" eventType="touchUpInside" id="ho4-1W-S7V"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="n1l-b3-GpN" firstAttribute="top" secondItem="NGp-Od-ynh" secondAttribute="bottom" constant="20" id="EOq-T8-cjv"/>
                             <constraint firstItem="Au2-mi-N3z" firstAttribute="top" secondItem="N8m-2M-pha" secondAttribute="bottom" constant="8" id="ItG-Ig-0C1"/>
                             <constraint firstItem="tfE-hc-3WI" firstAttribute="top" secondItem="W3v-lN-amn" secondAttribute="bottom" constant="8" id="SCH-uT-ISj"/>
                             <constraint firstItem="W3v-lN-amn" firstAttribute="top" secondItem="Au2-mi-N3z" secondAttribute="bottom" constant="8" id="Xyg-bi-sEo"/>
+                            <constraint firstItem="n1l-b3-GpN" firstAttribute="top" secondItem="k1H-iY-zJy" secondAttribute="bottom" constant="20" id="Zl5-eF-6tl"/>
                             <constraint firstItem="Au2-mi-N3z" firstAttribute="centerX" secondItem="YIh-EI-ieF" secondAttribute="centerX" id="eeY-CG-SEs"/>
                         </constraints>
                     </view>
@@ -580,7 +590,7 @@
                         <outlet property="descLabel" destination="By2-ga-Alb" id="t14-ar-40T"/>
                         <outlet property="eventImage" destination="W3v-lN-amn" id="OKx-qT-qNO"/>
                         <outlet property="eventName" destination="Au2-mi-N3z" id="IOz-gX-MK4"/>
-                        <outlet property="favoriteStarButton" destination="6hs-KR-k7I" id="04T-xf-0iM"/>
+                        <outlet property="favoriteStarButton" destination="NGp-Od-ynh" id="QVm-m3-kZh"/>
                         <outlet property="yellowFavorite" destination="k1H-iY-zJy" id="haO-KV-8Ug"/>
                     </connections>
                 </viewController>

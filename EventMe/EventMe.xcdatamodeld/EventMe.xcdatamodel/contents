@@ -2,10 +2,11 @@
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9525" systemVersion="15C50" minimumToolsVersion="Automatic">
     <entity name="Events" syncable="YES">
         <attribute name="downVoted" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="favorited" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="objectId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="upVoted" optional="YES" attributeType="Boolean" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Events" positionX="-54" positionY="-9" width="128" height="90"/>
+        <element name="Events" positionX="-54" positionY="-9" width="128" height="105"/>
     </elements>
 </model>
