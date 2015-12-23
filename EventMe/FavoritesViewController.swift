@@ -86,7 +86,7 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
         
     func searchEvents() {
         
-         progressBarDisplayer("Finding favorites", true)
+        progressBarDisplayer("Finding favorites", true)
         var query = PFQuery(className: "Event")
         query.addDescendingOrder("votes")
         query.whereKey("eventLocation", nearGeoPoint: point, withinMiles: 5)
@@ -95,7 +95,9 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
                 // There was an error
                 print("error")
             } else {
+                
                 UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                self.coreArray.removeAll()
                 self.eventsArray = objects!
                 
                 // setting up required core data components
@@ -356,6 +358,31 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
                 currentUser?.saveInBackground()
                 eventsArray.removeAtIndex(indexPath.row)
                 self.tableView.reloadData()
+            } else {
+                //make favorited key false for core data
+                // setting up required core data components
+                let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+                let context : NSManagedObjectContext = appDel.managedObjectContext
+                let request = NSFetchRequest(entityName: "Events")
+                request.returnsObjectsAsFaults = false
+                request.predicate = NSPredicate(format: "objectId = %@", self.coreArray[indexPath.row].objectId!)
+                
+                do {
+                    let result = try context.executeFetchRequest(request)
+                    for value in result as! [NSManagedObject] {
+                        value.setValue(false, forKey: "favorited")
+                    }
+                    do {
+                        try context.save()
+                        coreArray.removeAtIndex(indexPath.row)
+                        self.tableView.reloadData()
+                    } catch {
+                        print("couldn't save that change")
+                    }
+                } catch {
+                    print("faild to retrieve core data")
+                }
+                
             }
         }
     }
@@ -365,10 +392,9 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
         if(segue.identifier == "favDetailsSegue") {
             if let destination = segue.destinationViewController as? EventDetailViewController {
                 if let eventIndex = self.tableView.indexPathForSelectedRow {
-                    print(eventIndex.row)
-                    print(eventIndex)
+                    
+                    if currentUser != nil {
                     var object = self.eventsArray[eventIndex.row]
-                    print(object["eventName"] as! String)
                     
                     destination.nameText = object["eventName"] as! String
                     destination.descText = object["eventDescription"] as! String
@@ -380,6 +406,21 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
                     
                     //copying object
                     destination.passedObject = object
+                        
+                    } else {
+                        var object = self.coreArray[eventIndex.row]
+                        
+                        destination.nameText = object["eventName"] as! String
+                        destination.descText = object["eventDescription"] as! String
+                        
+                        //breaking down coordinates from PFGeoPoint into a string address using CLGeocoder
+                        var location = object["eventLocation"]
+                        var convLocation: CLLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
+                        destination.location = convLocation
+                        
+                        //copying object
+                        destination.passedObject = object
+                    }
                 }
             }
         }

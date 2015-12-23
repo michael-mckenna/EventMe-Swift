@@ -144,6 +144,7 @@ class EventDetailViewController: UIViewController, NSFetchedResultsControllerDel
                 yellowFavorite.hidden = false
                 favoriteStarButton.hidden = true
             } else {
+                 print("White tapped")
                 // setting up required core data components
                 let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
                 let context : NSManagedObjectContext = appDel.managedObjectContext
