@@ -36,23 +36,31 @@ class EventDetailViewController: UIViewController {
 
         if currentUser != nil {
             var favoritesRelation = currentUser?.relationForKey("favoriteEvents")
-            
+   
             let query = favoritesRelation?.query()
             
             query?.findObjectsInBackgroundWithBlock({ (objects: [PFObject]?, error: NSError?) -> Void in
                 if error == nil {
+                    print("no error")
                     //checks if returns array contains the event; if it does, this button removes that relation. If not, it adds the relation
+                    if(objects!.count > 0) {
                     for object in objects! {
+                        print("non empty array")
                         if object.objectId == self.passedObject.objectId {
-                            self.favorited = true
+                            print("favorite found")
                             self.yellowFavorite.hidden = false
                             self.favoriteStarButton.hidden = true
                             return
                         } else {
-                            self.favorited = false
+                            print("favorite not found")
                             self.yellowFavorite.hidden = true
                             self.favoriteStarButton.hidden = false
                         }
+                    }
+                    } else {
+                        print("empty array")
+                        self.yellowFavorite.hidden = true
+                        self.favoriteStarButton.hidden = false
                     }
                 } else {
                     print("Error finding favorites")

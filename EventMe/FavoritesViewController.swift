@@ -125,6 +125,133 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
         return cellToReturn
     }
     
+    func upVote(sender: AnyObject) {
+        
+        let button: UIButton = sender as! UIButton
+        let object = self.eventsArray[button.tag]
+        
+        // setting up required core data components
+        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let context : NSManagedObjectContext = appDel.managedObjectContext
+        let request = NSFetchRequest(entityName: "Events")
+        request.returnsObjectsAsFaults = false
+        request.predicate = NSPredicate(format: "objectId = %@", object.objectId!)
+        
+        do {
+            let result = try context.executeFetchRequest(request)
+            for value in result as! [NSManagedObject] {
+                
+                //check if there is a nil value
+                if value.valueForKey("upVoted") as? Bool != nil {
+                    //check if the bool value is false
+                    if value.valueForKey("upVoted") as! Bool == false {
+                        
+                        if value.valueForKey("downVoted") as? Bool != nil {
+                            if value.valueForKey("downVoted") as! Bool == true {
+                                object["votes"] = object["votes"] as! Int + 2
+                            } else {
+                                object["votes"] = object["votes"] as! Int + 1
+                            }
+                        }
+                        
+                        value.setValue(false, forKey: "downVoted")
+                        value.setValue(true, forKey: "upVoted")
+                        do {
+                            try context.save()
+                        } catch {
+                            print("Couldn't save changes")
+                        }
+                        
+                        object.saveInBackground()
+                        
+                        let indexPath = NSIndexPath(forRow: button.tag, inSection:0)
+                        self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Top)
+                    } else {
+                        value.setValue(false, forKey: "upVoted")
+                        do {
+                            try context.save()
+                        } catch {
+                            print("Couldn't save changes")
+                        }
+                        
+                        object["votes"] = object["votes"] as! Int - 1
+                        object.saveInBackground()
+                        
+                        let indexPath = NSIndexPath(forRow: button.tag, inSection:0)
+                        self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Top)
+                    }
+                }
+            }
+        } catch {
+            print("Something went wrong")
+        }
+        
+    }
+    
+    func downVote(sender: AnyObject) {
+        
+        var button: UIButton = sender as! UIButton
+        var object = self.eventsArray[button.tag]
+        
+        // setting up required core data components
+        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let context : NSManagedObjectContext = appDel.managedObjectContext
+        let request = NSFetchRequest(entityName: "Events")
+        request.returnsObjectsAsFaults = false
+        request.predicate = NSPredicate(format: "objectId = %@", object.objectId!)
+        
+        do {
+            let result = try context.executeFetchRequest(request)
+            for value in result as! [NSManagedObject] {
+                if value.valueForKey("downVoted") as? Bool != nil {
+                    if value.valueForKey("downVoted") as! Bool == false {
+                        
+                        // if the user already upvoted, we want to make down vote decrease the vote count by 2 (so it's one less from the original value)
+                        if value.valueForKey("upVoted") as? Bool != nil {
+                            if value.valueForKey("upVoted") as! Bool == true {
+                                object["votes"] = object["votes"] as! Int - 2
+                            } else {
+                                object["votes"] = object["votes"] as! Int - 1
+                            }
+                        }
+                        
+                        value.setValue(true, forKey: "downVoted")
+                        value.setValue(false, forKey: "upVoted")
+                        
+                        do {
+                            try context.save()
+                        } catch {
+                            print("Error saving changes")
+                        }
+                        
+                        object.saveInBackground()
+                        
+                        var indexPath = NSIndexPath(forRow: button.tag, inSection:0)
+                        self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Top)
+                    } else {
+                        value.setValue(false, forKey: "downVoted")
+                        do {
+                            try context.save()
+                        } catch {
+                            print("Couldn't save changes")
+                        }
+                        
+                        object["votes"] = object["votes"] as! Int + 1
+                        object.saveInBackground()
+                        
+                        let indexPath = NSIndexPath(forRow: button.tag, inSection:0)
+                        self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Top)
+                    }
+                    
+                }
+            }
+        } catch {
+            print("Something went wrong")
+        }
+        
+    }
+
+    
     func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
         
         return indexPath
@@ -135,11 +262,11 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
         
         if editingStyle == UITableViewCellEditingStyle.Delete {
             if(currentUser != nil) {
-            var favoritesRelation = currentUser?.relationForKey("favoriteEvents")
-            favoritesRelation?.removeObject(eventsArray[indexPath.row])
-            currentUser?.saveInBackground()
-            eventsArray.removeAtIndex(indexPath.row)
-            self.tableView.reloadData()
+                var favoritesRelation = currentUser?.relationForKey("favoriteEvents")
+                favoritesRelation?.removeObject(eventsArray[indexPath.row])
+                currentUser?.saveInBackground()
+                eventsArray.removeAtIndex(indexPath.row)
+                self.tableView.reloadData()
             }
         }
     }

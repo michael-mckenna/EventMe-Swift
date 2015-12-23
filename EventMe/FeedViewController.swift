@@ -223,7 +223,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     func upVote(sender: AnyObject) {
         
-        
         let button: UIButton = sender as! UIButton
         let object = self.eventsArray[button.tag]
         
