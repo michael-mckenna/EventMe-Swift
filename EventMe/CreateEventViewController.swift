@@ -82,6 +82,7 @@ class CreateEventViewController: UIViewController, CLLocationManagerDelegate, UI
         imagePicker.dismissViewControllerAnimated(true, completion: nil)
         self.image = info[UIImagePickerControllerOriginalImage] as? UIImage
         self.imageView.image = resizeImage(self.image!, newWidth: 200)
+        self.image = self.imageView.image
         //self.imageView.contentMode = .ScaleAspectFit
     }
     
