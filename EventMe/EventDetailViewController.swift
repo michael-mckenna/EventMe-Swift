@@ -47,6 +47,7 @@ class EventDetailViewController: UIViewController {
                             self.favorited = true
                             self.yellowFavorite.hidden = false
                             self.favoriteStarButton.hidden = true
+                            return
                         } else {
                             self.favorited = false
                             self.yellowFavorite.hidden = true
@@ -100,12 +101,22 @@ class EventDetailViewController: UIViewController {
     @IBAction func starTapped(sender: AnyObject) {
         if yellowFavorite.hidden == true {
             print("White tapped")
+            var relation = currentUser?.relationForKey("favoriteEvents")
+            relation?.addObject(self.passedObject)
+            self.currentUser?.saveInBackground()
+            yellowFavorite.hidden = false
+            favoriteStarButton.hidden = true
         }
     }
     
     @IBAction func yellowTapped(sender: AnyObject) {
         if favoriteStarButton.hidden == true {
             print("yellow tapped")
+            var relation = currentUser?.relationForKey("favoriteEvents")
+            relation?.removeObject(self.passedObject)
+            self.currentUser?.saveInBackground()
+            yellowFavorite.hidden = true
+            favoriteStarButton.hidden = false
         }
     }
     

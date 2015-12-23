@@ -114,7 +114,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 // There was an error
                 print("error")
             } else {
-                
+                UIApplication.sharedApplication().endIgnoringInteractionEvents()
                 self.eventsArray = objects!
                 
                 // setting up required core data components
@@ -158,6 +158,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     func progressBarDisplayer(msg:String, _ indicator:Bool ) {
+        
+        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
         
         strLabel = UILabel(frame: CGRect(x: 50, y: 0, width: 200, height: 50))
         strLabel.text = msg
