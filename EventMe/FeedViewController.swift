@@ -25,6 +25,9 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var currentUser = PFUser.currentUser()
     var displayAble = true
     var refresher: UIRefreshControl!
+    var activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
+    var strLabel = UILabel()
+    var messageFrame = UIView()
     
     override func viewDidLoad() {
             super.viewDidLoad()
@@ -85,6 +88,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     func searchEvents() {
+        progressBarDisplayer("Searching Events", true)
+        
         query.addDescendingOrder("votes")
         query.whereKey("eventLocation", nearGeoPoint: point, withinMiles: 5)
         query.findObjectsInBackgroundWithBlock { (objects: [PFObject]?, error: NSError?) -> Void in
@@ -92,11 +97,33 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 // There was an error
                 print("error")
             } else {
+                self.activityIndicator.stopAnimating()
+                self.messageFrame.removeFromSuperview()
                 self.eventsArray = objects!
                 self.tableView.reloadData()
                 self.refresher.endRefreshing()
             }
         }
+    }
+    
+    func progressBarDisplayer(msg:String, _ indicator:Bool ) {
+        
+        strLabel = UILabel(frame: CGRect(x: 50, y: 0, width: 200, height: 50))
+        strLabel.text = msg
+        strLabel.textColor = UIColor.whiteColor()
+        
+        messageFrame = UIView(frame: CGRect(x: view.frame.midX - 90, y: view.frame.midY - 100, width: 200, height: 50))
+        messageFrame.layer.cornerRadius = 15
+        messageFrame.backgroundColor = UIColor.grayColor()
+        
+        if indicator {
+            activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.White)
+            activityIndicator.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
+            activityIndicator.startAnimating()
+            messageFrame.addSubview(activityIndicator)
+        }
+        messageFrame.addSubview(strLabel)
+        view.addSubview(messageFrame)
     }
     
     override func didReceiveMemoryWarning() {
@@ -129,8 +156,37 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         cellToReturn.accessoryType = UITableViewCellAccessoryType.None
         cellToReturn.nameLabel.text = object["eventName"] as! String
         cellToReturn.votesLabel.text = String(object["votes"])
+        
+        //upVote functionality
+        cellToReturn.upArrow.tag = indexPath.row
+        cellToReturn.upArrow.addTarget(self, action: "upVote:", forControlEvents: .TouchUpInside)
 
+        //downvote functionality
+        cellToReturn.downArrow.tag = indexPath.row
+        cellToReturn.downArrow.addTarget(self, action: "downVote:", forControlEvents: .TouchUpInside)
+        
         return cellToReturn
+    }
+    
+    func upVote(sender: AnyObject) {
+        var button: UIButton = sender as! UIButton
+        var object = self.eventsArray[button.tag]
+        object["votes"] = object["votes"] as! Int + 1
+        
+        var indexPath = NSIndexPath(forRow: button.tag, inSection:0)
+        object.saveInBackground()
+        self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Top)
+    }
+    
+    func downVote(sender: AnyObject) {
+        var button: UIButton = sender as! UIButton
+        var object = self.eventsArray[button.tag]
+        object["votes"] = object["votes"] as! Int - 1
+        
+        var indexPath = NSIndexPath(forRow: button.tag, inSection: 0)
+        object.saveInBackground()
+        self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Bottom)
+        
     }
     
      func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
