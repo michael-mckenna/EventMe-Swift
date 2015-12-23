@@ -10,16 +10,23 @@ import Foundation
 import Parse
 import UIKit
 import CoreData
+import CoreLocation
 
-class FavoritesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, NSFetchedResultsControllerDelegate {
+class FavoritesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CLLocationManagerDelegate, NSFetchedResultsControllerDelegate {
     
     var currentUser = PFUser.currentUser()
     var eventsArray = [PFObject]()
+    var coreArray = [PFObject]()
+    var point = PFGeoPoint()
     var refresher: UIRefreshControl!
     var activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
     var strLabel = UILabel()
     var messageFrame = UIView()
+    var manager: CLLocationManager!
+    var latitude = 0.0
+    var longitude = 0.0
     var managedObjectContext: NSManagedObjectContext? = nil
+    var displayAble = false
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -37,15 +44,28 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
         self.tableView.rowHeight = 112
         self.tableView.addSubview(refresher)
         
-        searchFavorites()
+        if currentUser != nil {
+            searchFavorites()
+        } else {
+            print("nil user")
+            //location manager initialization
+            PFGeoPoint.geoPointForCurrentLocationInBackground {
+                (geoPoint: PFGeoPoint?, error: NSError?) -> Void in
+                if error == nil {
+                    self.point = geoPoint!
+                    self.searchEvents()
+                    print("got here")
+                }
+            }
+        }
     }
     
     func searchFavorites() {
         
         self.refresher.endRefreshing()
-        progressBarDisplayer("Finding favorites", true)
         
         if(currentUser != nil) {
+            progressBarDisplayer("Finding favorites", true)
             var favoritesRelation = currentUser?.relationForKey("favoriteEvents")
             var query = favoritesRelation?.query()
             query!.addDescendingOrder("votes")
@@ -61,10 +81,60 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
                 }
             }
         }
+        
+    }
+        
+    func searchEvents() {
+        
+         progressBarDisplayer("Finding favorites", true)
+        var query = PFQuery(className: "Event")
+        query.addDescendingOrder("votes")
+        query.whereKey("eventLocation", nearGeoPoint: point, withinMiles: 5)
+        query.findObjectsInBackgroundWithBlock { (objects: [PFObject]?, error: NSError?) -> Void in
+            if let error = error {
+                // There was an error
+                print("error")
+            } else {
+                UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                self.eventsArray = objects!
+                
+                // setting up required core data components
+                let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+                let context : NSManagedObjectContext = appDel.managedObjectContext
+                let request = NSFetchRequest(entityName: "Events")
+                request.returnsObjectsAsFaults = false
+                //returns all core events that have the value of favorited as true
+                request.predicate = NSPredicate(format: "favorited = %@", true)
+                do {
+                    let result = try context.executeFetchRequest(request)
+                    if result.count > 0 {
+                        for value in result as! [NSManagedObject] {
+                            for var i = 0; i < self.eventsArray.count; ++i {
+                                // the value for the event is true, so now we are comparing that to the events array to find which object it is that is favorited.
+                                // we have to do this because we cannot save a PFObject in core data - only its components
+                                if value.valueForKey("objectId") as! String == self.eventsArray[i].objectId {
+                                    self.coreArray.append(self.eventsArray[i])
+                                }
+                            }
+                        }
+                    }
+                } catch {
+                    print("failed to retrieve core data")
+                }
+            }
+                self.activityIndicator.stopAnimating()
+                self.messageFrame.removeFromSuperview()
+                self.tableView.reloadData()
+                self.refresher.endRefreshing()
+        }
     }
     
     func refresh() {
-       searchFavorites()
+        if currentUser != nil {
+            searchFavorites()
+        } else {
+            searchEvents()
+        }
     }
     
     func progressBarDisplayer(msg:String, _ indicator:Bool ) {
@@ -101,26 +171,45 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
         // #warning Incomplete method implementation.
         // Return the number of rows in the section.
         
+        if(currentUser != nil) {
         return eventsArray.count
+        } else {
+            return coreArray.count
+        }
     }
     
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
+     
         let cellToReturn = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! FavoritesCustomCell
-        let object = eventsArray[indexPath.row]
-        
-        cellToReturn.accessoryType = UITableViewCellAccessoryType.None
-        cellToReturn.nameLabel.text = (object["eventName"] as! String)
-        cellToReturn.votesLabel.text = String(object["votes"])
-        
-        //upVote functionality
-        cellToReturn.upArrow.tag = indexPath.row
-        cellToReturn.upArrow.addTarget(self, action: "upVote:", forControlEvents: .TouchUpInside)
-        
-        //downvote functionality
-        cellToReturn.downArrow.tag = indexPath.row
-        cellToReturn.downArrow.addTarget(self, action: "downVote:", forControlEvents: .TouchUpInside)
+        if currentUser != nil {
+            let object = eventsArray[indexPath.row]
+            cellToReturn.accessoryType = UITableViewCellAccessoryType.None
+            cellToReturn.nameLabel.text = (object["eventName"] as! String)
+            cellToReturn.votesLabel.text = String(object["votes"])
+            
+            //upVote functionality
+            cellToReturn.upArrow.tag = indexPath.row
+            cellToReturn.upArrow.addTarget(self, action: "upVote:", forControlEvents: .TouchUpInside)
+            
+            //downvote functionality
+            cellToReturn.downArrow.tag = indexPath.row
+            cellToReturn.downArrow.addTarget(self, action: "downVote:", forControlEvents: .TouchUpInside)
+        } else {
+            let object = coreArray[indexPath.row]
+            cellToReturn.accessoryType = UITableViewCellAccessoryType.None
+            cellToReturn.nameLabel.text = (object["eventName"] as! String)
+            cellToReturn.votesLabel.text = String(object["votes"])
+            
+            //upVote functionality
+            cellToReturn.upArrow.tag = indexPath.row
+            cellToReturn.upArrow.addTarget(self, action: "upVote:", forControlEvents: .TouchUpInside)
+            
+            //downvote functionality
+            cellToReturn.downArrow.tag = indexPath.row
+            cellToReturn.downArrow.addTarget(self, action: "downVote:", forControlEvents: .TouchUpInside)
+        }
         
         return cellToReturn
     }

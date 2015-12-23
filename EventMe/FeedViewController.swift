@@ -31,6 +31,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var messageFrame = UIView()
     var managedObjectContext: NSManagedObjectContext? = nil
     
+// make sure core data is synced with parse
     
     override func viewDidLoad() {
         super.viewDidLoad()
