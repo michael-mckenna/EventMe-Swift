@@ -24,6 +24,9 @@ class CreateEventViewController: UIViewController, CLLocationManagerDelegate, UI
     var manager: CLLocationManager!
     var imagePicker: UIImagePickerController!
     var image = UIImage?()
+    var activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
+    var strLabel = UILabel()
+    var messageFrame = UIView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -78,15 +81,28 @@ class CreateEventViewController: UIViewController, CLLocationManagerDelegate, UI
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         imagePicker.dismissViewControllerAnimated(true, completion: nil)
         self.image = info[UIImagePickerControllerOriginalImage] as? UIImage
-        self.imageView.image = self.image
-        
-        /* myImageView.contentMode = .ScaleAspectFit
-        myImageView.image = chosenImage */
+        self.imageView.image = resizeImage(self.image!, newWidth: 200)
+        self.image = self.imageView.image
+        //self.imageView.contentMode = .ScaleAspectFit
     }
     
     //function called when the user cancels photo picking
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
         dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func resizeImage(image: UIImage, newWidth: CGFloat) -> UIImage {
+        let scale = newWidth / image.size.width
+        let newHeight = image.size.height * scale
+        
+        UIGraphicsBeginImageContext(CGSizeMake(newWidth, newHeight))
+        
+        image.drawInRect(CGRectMake(0, 0, newWidth, newHeight))
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        
+        UIGraphicsEndImageContext()
+        
+        return newImage
     }
     
     func action(gestureRecognizer:UIGestureRecognizer) {
@@ -200,14 +216,38 @@ class CreateEventViewController: UIViewController, CLLocationManagerDelegate, UI
             event["eventImage"] = imageFile
         }
         
+        progressBarDisplayer("Saving Event", true)
         event.saveInBackgroundWithBlock { (success: Bool, error: NSError?) -> Void in
             if(success) {
+                self.activityIndicator.stopAnimating()
+                UIApplication.sharedApplication().endIgnoringInteractionEvents()
                 print("Successfully saved event\n")
-                print(point)
                 self.navigationController?.popToRootViewControllerAnimated(true)
             }
         }
         
+    }
+    
+    func progressBarDisplayer(msg:String, _ indicator:Bool ) {
+        
+        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+        
+        strLabel = UILabel(frame: CGRect(x: 50, y: 0, width: 200, height: 50))
+        strLabel.text = msg
+        strLabel.textColor = UIColor.whiteColor()
+        
+        messageFrame = UIView(frame: CGRect(x: view.frame.midX - 90, y: view.frame.midY - 100, width: 180, height: 50))
+        messageFrame.layer.cornerRadius = 15
+        messageFrame.backgroundColor = UIColor.grayColor()
+        
+        if indicator {
+            activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.White)
+            activityIndicator.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
+            activityIndicator.startAnimating()
+            messageFrame.addSubview(activityIndicator)
+        }
+        messageFrame.addSubview(strLabel)
+        view.addSubview(messageFrame)
     }
     
     
