@@ -16,6 +16,8 @@ class EventDetailViewController: UIViewController {
     @IBOutlet weak var eventImage: UIImageView!
     @IBOutlet weak var addressLabel: UILabel!
     @IBOutlet weak var descLabel: UILabel!
+    @IBOutlet weak var favoriteStarButton: UIButton!
+    @IBOutlet weak var yellowFavorite: UIButton!
     
 
     
@@ -25,11 +27,37 @@ class EventDetailViewController: UIViewController {
     var descText = String()
     var addressText = String()
     var location = CLLocation()
-    var userImageObject = PFObject(className: "Event")
+    var passedObject = PFObject(className: "Event")
+    var currentUser = PFUser.currentUser()
+    var favorited = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+
+        if currentUser != nil {
+            var favoritesRelation = currentUser?.relationForKey("favoriteEvents")
+            
+            let query = favoritesRelation?.query()
+            
+            query?.findObjectsInBackgroundWithBlock({ (objects: [PFObject]?, error: NSError?) -> Void in
+                if error == nil {
+                    //checks if returns array contains the event; if it does, this button removes that relation. If not, it adds the relation
+                    for object in objects! {
+                        if object.objectId == self.passedObject.objectId {
+                            self.favorited = true
+                            self.yellowFavorite.hidden = false
+                            self.favoriteStarButton.hidden = true
+                        } else {
+                            self.favorited = false
+                            self.yellowFavorite.hidden = true
+                            self.favoriteStarButton.hidden = false
+                        }
+                    }
+                } else {
+                    print("Error finding favorites")
+                }
+            })
+        }
         
         CLGeocoder().reverseGeocodeLocation(location, completionHandler: { (placemarks, error) -> Void in
             if error == nil {
@@ -51,7 +79,7 @@ class EventDetailViewController: UIViewController {
         self.addressLabel.text = addressText
         
         //image
-        if let userImageFile = self.userImageObject["eventImage"] as? PFFile {
+        if let userImageFile = self.passedObject["eventImage"] as? PFFile {
            userImageFile.getDataInBackgroundWithBlock {
             (imageData: NSData?, error: NSError?) -> Void in
             if error == nil {
@@ -68,6 +96,20 @@ class EventDetailViewController: UIViewController {
         }
 
     }
+    
+    @IBAction func starTapped(sender: AnyObject) {
+        if yellowFavorite.hidden == true {
+            print("White tapped")
+        }
+    }
+    
+    @IBAction func yellowTapped(sender: AnyObject) {
+        if favoriteStarButton.hidden == true {
+            print("yellow tapped")
+        }
+    }
+    
+
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

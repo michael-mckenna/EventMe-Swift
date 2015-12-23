@@ -79,8 +79,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     override func viewWillAppear(animated: Bool) {
-        //searchEvents()
-
+      
     }
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -388,7 +387,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                     destination.location = convLocation
                     
                     //extracting image data from object
-                    destination.userImageObject = object
+                    destination.passedObject = object
                 }
             }
         }
