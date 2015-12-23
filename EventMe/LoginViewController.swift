@@ -35,6 +35,16 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBAction func login(sender: AnyObject) {
         let username = self.username.text
         let password = self.password.text
+
+        // catch for empty text fields
+        if self.username.text!.isEmpty || self.password.text!.isEmpty {
+            let emptyText = UIAlertView()
+            emptyText.title = "Empty Username"
+            emptyText.message = "username or password is blank!"
+            emptyText.addButtonWithTitle("OK")
+            emptyText.show()
+            return;
+        }
         
         PFUser.logInWithUsernameInBackground(username!, password: password!) {
             (user: PFUser?, error: NSError?) -> Void in
@@ -43,28 +53,14 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 self.performSegueWithIdentifier("loginToFeed", sender: self)
             } else {
                 // The login failed. Check error to see why.
-                print("There was an error")
-            }
-        }
-    }
-    
-    override func shouldPerformSegueWithIdentifier(identifier: String, sender: AnyObject?) -> Bool {
-        if identifier == "loginToFeed" {
-            if username.text!.isEmpty || password.text!.isEmpty {
                 let emptyText = UIAlertView()
-                emptyText.title = "Empty Username"
-                emptyText.message = "Username field is empty"
+                emptyText.title = "Error"
+                emptyText.message = "Username or Password is Invalid"
                 emptyText.addButtonWithTitle("OK")
                 emptyText.show()
-            
-                return false
-            } else {
-                return true
+                return;
             }
-            
-       }
-        
-        return true
+        }
     }
     
     @IBAction func signUp(sender: AnyObject) {
