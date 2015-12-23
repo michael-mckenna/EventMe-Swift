@@ -31,6 +31,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var messageFrame = UIView()
     var managedObjectContext: NSManagedObjectContext? = nil
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -64,7 +65,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             let results = try context.executeFetchRequest(request)
             if results.count == 0 {
                 let newObject: NSManagedObject = NSEntityDescription.insertNewObjectForEntityForName("Events", inManagedObjectContext: context)
-                newObject.setValue("turd nugget", forKey: "objectId")
+                newObject.setValue("randomObjToFillArray", forKey: "objectId")
             }
         } catch {
             
@@ -135,6 +136,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                             newObject.setValue(self.eventsArray[i].objectId, forKey: "objectId")
                             newObject.setValue(false, forKey: "upVoted")
                             newObject.setValue(false, forKey: "downVoted")
+                            newObject.setValue(false, forKey: "favorited")
                             print("objectId")
                             do {
                                 try context.save()
@@ -147,7 +149,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                         print("something went wrong")
                     }
                 }
-                
                 
                 self.activityIndicator.stopAnimating()
                 self.messageFrame.removeFromSuperview()
