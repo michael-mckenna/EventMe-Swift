@@ -27,6 +27,7 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
     var longitude = 0.0
     var managedObjectContext: NSManagedObjectContext? = nil
     var displayAble = false
+    var voteObject = PFObject(className: "Event")
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -219,14 +220,18 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
     func upVote(sender: AnyObject) {
         
         let button: UIButton = sender as! UIButton
-        let object = self.eventsArray[button.tag]
+        if currentUser != nil {
+            self.voteObject = self.eventsArray[button.tag]
+        } else {
+            self.voteObject = self.coreArray[button.tag]
+        }
         
         // setting up required core data components
         let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         let context : NSManagedObjectContext = appDel.managedObjectContext
         let request = NSFetchRequest(entityName: "Events")
         request.returnsObjectsAsFaults = false
-        request.predicate = NSPredicate(format: "objectId = %@", object.objectId!)
+        request.predicate = NSPredicate(format: "objectId = %@", self.voteObject.objectId!)
         
         do {
             let result = try context.executeFetchRequest(request)
@@ -239,9 +244,9 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
                         
                         if value.valueForKey("downVoted") as? Bool != nil {
                             if value.valueForKey("downVoted") as! Bool == true {
-                                object["votes"] = object["votes"] as! Int + 2
+                                self.voteObject["votes"] = self.voteObject["votes"] as! Int + 2
                             } else {
-                                object["votes"] = object["votes"] as! Int + 1
+                                self.voteObject["votes"] = self.voteObject["votes"] as! Int + 1
                             }
                         }
                         
@@ -253,7 +258,7 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
                             print("Couldn't save changes")
                         }
                         
-                        object.saveInBackground()
+                        self.voteObject.saveInBackground()
                         
                         let indexPath = NSIndexPath(forRow: button.tag, inSection:0)
                         self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Top)
@@ -265,8 +270,8 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
                             print("Couldn't save changes")
                         }
                         
-                        object["votes"] = object["votes"] as! Int - 1
-                        object.saveInBackground()
+                        self.voteObject["votes"] = self.voteObject["votes"] as! Int - 1
+                        self.voteObject.saveInBackground()
                         
                         let indexPath = NSIndexPath(forRow: button.tag, inSection:0)
                         self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Top)
@@ -282,14 +287,18 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
     func downVote(sender: AnyObject) {
         
         var button: UIButton = sender as! UIButton
-        var object = self.eventsArray[button.tag]
+        if currentUser != nil {
+            self.voteObject = self.eventsArray[button.tag]
+        } else {
+            self.voteObject = self.coreArray[button.tag]
+        }
         
         // setting up required core data components
         let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         let context : NSManagedObjectContext = appDel.managedObjectContext
         let request = NSFetchRequest(entityName: "Events")
         request.returnsObjectsAsFaults = false
-        request.predicate = NSPredicate(format: "objectId = %@", object.objectId!)
+        request.predicate = NSPredicate(format: "objectId = %@", self.voteObject.objectId!)
         
         do {
             let result = try context.executeFetchRequest(request)
@@ -300,9 +309,9 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
                         // if the user already upvoted, we want to make down vote decrease the vote count by 2 (so it's one less from the original value)
                         if value.valueForKey("upVoted") as? Bool != nil {
                             if value.valueForKey("upVoted") as! Bool == true {
-                                object["votes"] = object["votes"] as! Int - 2
+                                self.voteObject["votes"] = self.voteObject["votes"] as! Int - 2
                             } else {
-                                object["votes"] = object["votes"] as! Int - 1
+                                self.voteObject["votes"] = self.voteObject["votes"] as! Int - 1
                             }
                         }
                         
@@ -315,7 +324,7 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
                             print("Error saving changes")
                         }
                         
-                        object.saveInBackground()
+                        self.voteObject.saveInBackground()
                         
                         var indexPath = NSIndexPath(forRow: button.tag, inSection:0)
                         self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Top)
@@ -327,8 +336,8 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
                             print("Couldn't save changes")
                         }
                         
-                        object["votes"] = object["votes"] as! Int + 1
-                        object.saveInBackground()
+                        self.voteObject["votes"] = self.voteObject["votes"] as! Int + 1
+                        self.voteObject.saveInBackground()
                         
                         let indexPath = NSIndexPath(forRow: button.tag, inSection:0)
                         self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Top)
