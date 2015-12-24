@@ -32,11 +32,25 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
         user.username = self.username.text
         user.password = self.password.text
         
+        if self.username.text!.isEmpty || self.password.text!.isEmpty {
+            let alert = UIAlertView()
+            alert.title = "Error"
+            alert.message = "One or more fields were left blank!"
+            alert.addButtonWithTitle("OK")
+            alert.show()
+            return
+        }
+        
         user.signUpInBackgroundWithBlock {
             (succeeded: Bool, error: NSError?) -> Void in
             if let error = error {
-                let errorString = error.userInfo["error"] as? NSString
-                // Show the errorString somewhere and let the user try again.
+                let alert = UIAlertView()
+                alert.title = "Error"
+                alert.message = "There was an unknown error. Please try again"
+                alert.addButtonWithTitle("OK")
+                alert.show()
+                return
+                
             } else {
                 // Hooray! Let them use the app now.
                 print("Successful sign up")

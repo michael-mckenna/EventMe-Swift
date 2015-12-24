@@ -194,13 +194,20 @@ class CreateEventViewController: UIViewController, CLLocationManagerDelegate, UI
     }
     
     @IBAction func saveEvent(sender: AnyObject) {
+        
         //alertdialog first to check if fields are blank
+        if self.nameInput.text!.isEmpty || self.descriptionInput.text.isEmpty || self.tagsInput.text!.isEmpty {
+            let alert = UIAlertView()
+            alert.title = "Error"
+            alert.message = "One or more fields were left blank!"
+            alert.addButtonWithTitle("OK")
+            alert.show()
+            return
+        }
         
         var point = PFGeoPoint(latitude: 0.0, longitude: 0.0)
         point.latitude = self.thisLat
         point.longitude = self.thisLong
-        
-    
         
         var event = PFObject(className: "Event")
         
@@ -262,6 +269,5 @@ class CreateEventViewController: UIViewController, CLLocationManagerDelegate, UI
         textField.resignFirstResponder()
         return true;
     }
-    
 
 }

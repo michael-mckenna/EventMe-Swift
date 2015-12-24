@@ -54,6 +54,7 @@
 		4C4107541C27D09500CF686E /* down@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C4107511C27D09500CF686E /* down@3x.png */; };
 		4CA6F3BE1C27DB6900D3918F /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA6F3BD1C27DB6900D3918F /* SettingsViewController.swift */; };
 		4CA6F3C21C2872B900D3918F /* FeedCustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA6F3C11C2872B900D3918F /* FeedCustomCell.swift */; };
+		CBFB82191C2B5E24007573D0 /* CreateEventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBFB82181C2B5E24007573D0 /* CreateEventTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -127,6 +128,7 @@
 		4C4107511C27D09500CF686E /* down@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "down@3x.png"; sourceTree = "<group>"; };
 		4CA6F3BD1C27DB6900D3918F /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		4CA6F3C11C2872B900D3918F /* FeedCustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedCustomCell.swift; sourceTree = "<group>"; };
+		CBFB82181C2B5E24007573D0 /* CreateEventTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateEventTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -212,6 +214,7 @@
 				4C4107481C27D07800CF686E /* Images */,
 				4C4106D81C2504F600CF686E /* AppDelegate.swift */,
 				4C41072F1C25E31B00CF686E /* CreateEventViewController.swift */,
+				CBFB82181C2B5E24007573D0 /* CreateEventTableViewController.swift */,
 				4C4107311C27683B00CF686E /* EventDetailViewController.swift */,
 				4C4107331C27987200CF686E /* FavoritesViewController.swift */,
 				4C16B3601C2B181300971665 /* FavoritesCustomCell.swift */,
@@ -337,7 +340,7 @@
 				TargetAttributes = {
 					4C4106D41C2504F600CF686E = {
 						CreatedOnToolsVersion = 7.2;
-						DevelopmentTeam = Z9N3SFS555;
+						DevelopmentTeam = 35V4FM8YP4;
 					};
 					4C4106EB1C2504F600CF686E = {
 						CreatedOnToolsVersion = 7.2;
@@ -429,6 +432,7 @@
 				4C4107321C27683B00CF686E /* EventDetailViewController.swift in Sources */,
 				4C16B3611C2B181300971665 /* FavoritesCustomCell.swift in Sources */,
 				4C4106E11C2504F600CF686E /* EventMe.xcdatamodeld in Sources */,
+				CBFB82191C2B5E24007573D0 /* CreateEventTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -576,7 +580,7 @@
 				);
 				INFOPLIST_FILE = EventMe/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = shamalamadingdong;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.purdue.crouse0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 			};
@@ -594,7 +598,7 @@
 				);
 				INFOPLIST_FILE = EventMe/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = shamalamadingdong;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.purdue.crouse0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 			};
