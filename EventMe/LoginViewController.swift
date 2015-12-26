@@ -51,8 +51,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate, FBSDKLoginButt
         // catch for empty text fields
         if self.username.text!.isEmpty || self.password.text!.isEmpty {
             let emptyText = UIAlertView()
-            emptyText.title = "Empty Username"
-            emptyText.message = "username or password is blank!"
+            emptyText.title = "Error"
+            emptyText.message = "Username or Password is blank!"
             emptyText.addButtonWithTitle("OK")
             emptyText.show()
             return;

@@ -67,6 +67,7 @@
 		4C60AED71C2E303F009D7945 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C60AED61C2E303F009D7945 /* FBSDKCoreKit.framework */; };
 		4CA6F3BE1C27DB6900D3918F /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA6F3BD1C27DB6900D3918F /* SettingsViewController.swift */; };
 		4CA6F3C21C2872B900D3918F /* FeedCustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA6F3C11C2872B900D3918F /* FeedCustomCell.swift */; };
+		CBFB82191C2B5E24007573D0 /* CreateEventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBFB82181C2B5E24007573D0 /* CreateEventTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -153,6 +154,7 @@
 		4C60AED61C2E303F009D7945 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
 		4CA6F3BD1C27DB6900D3918F /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		4CA6F3C11C2872B900D3918F /* FeedCustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedCustomCell.swift; sourceTree = "<group>"; };
+		CBFB82181C2B5E24007573D0 /* CreateEventTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateEventTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -248,6 +250,7 @@
 				4C4107481C27D07800CF686E /* Images */,
 				4C4106D81C2504F600CF686E /* AppDelegate.swift */,
 				4C41072F1C25E31B00CF686E /* CreateEventViewController.swift */,
+				CBFB82181C2B5E24007573D0 /* CreateEventTableViewController.swift */,
 				4C4107311C27683B00CF686E /* EventDetailViewController.swift */,
 				4C4107331C27987200CF686E /* FavoritesViewController.swift */,
 				4C16B3601C2B181300971665 /* FavoritesCustomCell.swift */,
@@ -481,6 +484,7 @@
 				4C4107321C27683B00CF686E /* EventDetailViewController.swift in Sources */,
 				4C16B3611C2B181300971665 /* FavoritesCustomCell.swift in Sources */,
 				4C4106E11C2504F600CF686E /* EventMe.xcdatamodeld in Sources */,
+				CBFB82191C2B5E24007573D0 /* CreateEventTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
