@@ -31,6 +31,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var messageFrame = UIView()
     var managedObjectContext: NSManagedObjectContext? = nil
     
+// make sure core data is synced with parse
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -64,7 +66,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             let results = try context.executeFetchRequest(request)
             if results.count == 0 {
                 let newObject: NSManagedObject = NSEntityDescription.insertNewObjectForEntityForName("Events", inManagedObjectContext: context)
-                newObject.setValue("turd nugget", forKey: "objectId")
+                newObject.setValue("randomObjToFillArray", forKey: "objectId")
             }
         } catch {
             
@@ -114,7 +116,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 // There was an error
                 print("error")
             } else {
-                
+                UIApplication.sharedApplication().endIgnoringInteractionEvents()
                 self.eventsArray = objects!
                 
                 // setting up required core data components
@@ -135,6 +137,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                             newObject.setValue(self.eventsArray[i].objectId, forKey: "objectId")
                             newObject.setValue(false, forKey: "upVoted")
                             newObject.setValue(false, forKey: "downVoted")
+                            newObject.setValue(false, forKey: "favorited")
                             print("objectId")
                             do {
                                 try context.save()
@@ -148,7 +151,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                     }
                 }
                 
-                
                 self.activityIndicator.stopAnimating()
                 self.messageFrame.removeFromSuperview()
                 self.tableView.reloadData()
@@ -158,6 +160,8 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     func progressBarDisplayer(msg:String, _ indicator:Bool ) {
+        
+        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
         
         strLabel = UILabel(frame: CGRect(x: 50, y: 0, width: 200, height: 50))
         strLabel.text = msg
@@ -220,7 +224,6 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     func upVote(sender: AnyObject) {
-        
         
         let button: UIButton = sender as! UIButton
         let object = self.eventsArray[button.tag]
