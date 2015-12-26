@@ -8,9 +8,13 @@
 
 import UIKit
 import Parse
+import FBSDKLoginKit
+import ParseFacebookUtilsV4
+import FBSDKCoreKit
 
-class LoginViewController: UIViewController, UITextFieldDelegate {
+class LoginViewController: UIViewController, UITextFieldDelegate, FBSDKLoginButtonDelegate {
 
+    
     @IBOutlet weak var username: UITextField!
     @IBOutlet weak var password: UITextField!
 
@@ -21,7 +25,15 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         username.delegate = self
         password.delegate = self
         
-        if((PFUser.currentUser()) != nil) {
+        //setting up facebook login button
+        var facebookLogin = FBSDKLoginButton()
+        //want this button to conform to this protocol
+        facebookLogin.delegate = self
+        facebookLogin.readPermissions = ["public_profile", "email", "user_friends"]
+        facebookLogin.frame = CGRectMake(20, 359, 335, 30)
+        self.view.addSubview(facebookLogin)
+        
+        if((PFUser.currentUser()) != nil || FBSDKAccessToken.currentAccessToken() != nil) {
             self.performSegueWithIdentifier("loginToFeed", sender: self)
         }
 
@@ -44,25 +56,36 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             emptyText.addButtonWithTitle("OK")
             emptyText.show()
             return;
-        }
-        
-        PFUser.logInWithUsernameInBackground(username!, password: password!) {
-            (user: PFUser?, error: NSError?) -> Void in
-            if user != nil {
-                // Do stuff after successful login.
-                self.performSegueWithIdentifier("loginToFeed", sender: self)
-            } else {
-                // The login failed. Check error to see why.
-                let emptyText = UIAlertView()
-                emptyText.title = "Error"
-                emptyText.message = "Username or Password is Invalid"
-                emptyText.addButtonWithTitle("OK")
-                emptyText.show()
-                return;
+        } else {
+            PFUser.logInWithUsernameInBackground(username!, password: password!) {
+                (user: PFUser?, error: NSError?) -> Void in
+                if user != nil {
+                    // Do stuff after successful login.
+                    self.performSegueWithIdentifier("loginToFeed", sender: self)
+                } else {
+                    // The login failed. Check error to see why.
+                }
             }
         }
     }
     
+
+    public func loginButton(loginButton: FBSDKLoginButton!, didCompleteWithResult result: FBSDKLoginManagerLoginResult!, error: NSError!) {
+        
+        if error != nil {
+            print(error.localizedDescription)
+            return
+        } else {
+          print("No error")
+          self.performSegueWithIdentifier("loginToFeed", sender: self)
+        }
+        
+    }
+
+    public func loginButtonDidLogOut(loginButton: FBSDKLoginButton!) {
+        print("user is logged out")
+    }
+ 
     @IBAction func signUp(sender: AnyObject) {
         self.performSegueWithIdentifier("signUpSegue", sender: self)
     }

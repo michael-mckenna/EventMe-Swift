@@ -9,8 +9,9 @@
 import Foundation
 import UIKit
 import Parse
+import FBSDKLoginKit
 
-class SettingsViewController: UIViewController {
+class SettingsViewController: UIViewController{
     
     @IBOutlet weak var logButton: UIButton!
     
@@ -19,9 +20,9 @@ class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if currentUser != nil {
+        if currentUser != nil || FBSDKAccessToken.currentAccessToken() != nil {
             logButton.setTitle("Log Out", forState: .Normal)
-        } else {
+        } else if currentUser == nil || FBSDKAccessToken.currentAccessToken() == nil {
             logButton.setTitle("Log In", forState: .Normal)
         }
     }
@@ -32,11 +33,17 @@ class SettingsViewController: UIViewController {
     }
     
     @IBAction func logOut(sender: AnyObject) {
-        if (currentUser != nil) {
+        if currentUser != nil {
             PFUser.logOut()
+            self.performSegueWithIdentifier("toLoginSegue", sender: self)
+        } else if FBSDKAccessToken.currentAccessToken() != nil {
+            let loginManager = FBSDKLoginManager()
+            loginManager.logOut()
+            self.performSegueWithIdentifier("toLoginSegue", sender: self)
+        } else {
+            self.performSegueWithIdentifier("toLoginSegue", sender: self)
         }
         
-        self.performSegueWithIdentifier("toLoginSegue", sender: self)
     }
     
 }
