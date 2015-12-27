@@ -405,7 +405,7 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="dayLabel" destination="eUG-Pp-5pb" id="CZQ-pa-VID"/>
-                                            <outlet property="downArrow" destination="pi1-yY-tGq" id="Ztq-kn-ItK"/>
+                                            <outlet property="downArrow" destination="pi1-yY-tGq" id="RU7-5P-Mp5"/>
                                             <outlet property="monthAndDay" destination="rT6-Ug-uqG" id="VHR-3k-BeY"/>
                                             <outlet property="nameLabel" destination="uk0-eD-iyE" id="p8N-sj-wwJ"/>
                                             <outlet property="upArrow" destination="3vp-09-B8R" id="cdt-nW-tu0"/>
@@ -444,7 +444,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8bC-aJ-mX7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="836.5" y="116.5"/>
+            <point key="canvasLocation" x="884.5" y="174.5"/>
         </scene>
         <!--Me-->
         <scene sceneID="caV-5w-cu8">
@@ -829,7 +829,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="70" id="Ysm-BM-bWq" userLabel="Name">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="EventTableViewCell" rowHeight="70" id="Ysm-BM-bWq" userLabel="Name" customClass="EventTableViewCell" customModule="EventMe" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="320" height="70"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ysm-BM-bWq" id="Dqi-za-EtI">

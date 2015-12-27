@@ -67,6 +67,7 @@
 		4C60AED71C2E303F009D7945 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C60AED61C2E303F009D7945 /* FBSDKCoreKit.framework */; };
 		4CA6F3BE1C27DB6900D3918F /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA6F3BD1C27DB6900D3918F /* SettingsViewController.swift */; };
 		4CA6F3C21C2872B900D3918F /* FeedCustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA6F3C11C2872B900D3918F /* FeedCustomCell.swift */; };
+		CB1387391C2F214200960DC3 /* EventTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1387381C2F214200960DC3 /* EventTableViewCell.swift */; };
 		CBFB82191C2B5E24007573D0 /* CreateEventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBFB82181C2B5E24007573D0 /* CreateEventTableViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -154,6 +155,7 @@
 		4C60AED61C2E303F009D7945 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
 		4CA6F3BD1C27DB6900D3918F /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		4CA6F3C11C2872B900D3918F /* FeedCustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedCustomCell.swift; sourceTree = "<group>"; };
+		CB1387381C2F214200960DC3 /* EventTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventTableViewCell.swift; sourceTree = "<group>"; };
 		CBFB82181C2B5E24007573D0 /* CreateEventTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateEventTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -268,6 +270,7 @@
 				4C4106E21C2504F600CF686E /* Assets.xcassets */,
 				4C4106E71C2504F600CF686E /* Info.plist */,
 				4C4106DF1C2504F600CF686E /* EventMe.xcdatamodeld */,
+				CB1387381C2F214200960DC3 /* EventTableViewCell.swift */,
 			);
 			path = EventMe;
 			sourceTree = "<group>";
@@ -384,7 +387,7 @@
 				TargetAttributes = {
 					4C4106D41C2504F600CF686E = {
 						CreatedOnToolsVersion = 7.2;
-						DevelopmentTeam = SBK479XNPB;
+						DevelopmentTeam = 35V4FM8YP4;
 					};
 					4C4106EB1C2504F600CF686E = {
 						CreatedOnToolsVersion = 7.2;
@@ -480,6 +483,7 @@
 				4C4107301C25E31B00CF686E /* CreateEventViewController.swift in Sources */,
 				4C41072A1C25101000CF686E /* SignUpViewController.swift in Sources */,
 				4C41072E1C25223900CF686E /* FeedViewController.swift in Sources */,
+				CB1387391C2F214200960DC3 /* EventTableViewCell.swift in Sources */,
 				4C16B3871C2C75A100971665 /* SettingsTableViewController.swift in Sources */,
 				4C4107321C27683B00CF686E /* EventDetailViewController.swift in Sources */,
 				4C16B3611C2B181300971665 /* FavoritesCustomCell.swift in Sources */,
@@ -634,7 +638,7 @@
 				);
 				INFOPLIST_FILE = EventMe/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.aggiecodingclub.EventMe;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.purdue.crouse0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
@@ -653,7 +657,7 @@
 				);
 				INFOPLIST_FILE = EventMe/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.aggiecodingclub.EventMe;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.purdue.crouse0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";

@@ -306,7 +306,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
                     
                     // if the user already upvoted, we want to make down vote decrease the vote count by 2 (so it's one less from the original value)
                     if value.valueForKey("upVoted") as? Bool != nil {
-                        if value.valueForKey("upVoted") as! Bool == true {
+                        if value.valueForKey("up  Voted") as! Bool == true {
                             object["votes"] = object["votes"] as! Int - 2
                         } else {
                             object["votes"] = object["votes"] as! Int - 1
