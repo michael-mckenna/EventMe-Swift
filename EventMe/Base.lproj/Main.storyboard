@@ -675,7 +675,7 @@
         <!--Create New Event Table View Controller-->
         <scene sceneID="q1y-bd-qQ6">
             <objects>
-                <tableViewController id="dkw-Ce-uQg" userLabel="Create New Event Table View Controller" sceneMemberID="viewController">
+                <tableViewController id="dkw-Ce-uQg" userLabel="Create New Event Table View Controller" customClass="NewEventTableViewController" customModule="EventMe" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="65" sectionHeaderHeight="28" sectionFooterHeight="28" id="p1I-rq-Lme">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -812,7 +812,11 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="5Ji-wO-RCO">
-                        <barButtonItem key="rightBarButtonItem" title="submit" id="mPJ-cS-GjO" userLabel="submit"/>
+                        <barButtonItem key="rightBarButtonItem" title="submit" id="mPJ-cS-GjO" userLabel="submit">
+                            <connections>
+                                <action selector="submitEvent:" destination="dkw-Ce-uQg" id="Ppe-vO-QHk"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5le-es-lhl" userLabel="First Responder" sceneMemberID="firstResponder"/>

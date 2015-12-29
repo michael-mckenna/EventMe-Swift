@@ -18,6 +18,9 @@ class EventLocationViewController: UIViewController {
     @IBOutlet weak var state: UITextField!
     @IBOutlet weak var zip: UITextField!
     
+    static var eventLocation = CLLocation()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -57,8 +60,6 @@ class EventLocationViewController: UIViewController {
         
         let address = streetStr + cityStr + stateStr + ", USA"
         
-        
-//        let address = "7158 Lakeside Dr, Indianapolis, IN, USA"
         let geocoder = CLGeocoder()
         
         geocoder.geocodeAddressString(address, completionHandler: {(placemarks, error) -> Void in
@@ -84,6 +85,8 @@ class EventLocationViewController: UIViewController {
                 annotation.coordinate = coordinates
                 self.mapView.addAnnotation(annotation)
                 
+                // set class variable
+                EventLocationViewController.eventLocation = location
             }
         })
         

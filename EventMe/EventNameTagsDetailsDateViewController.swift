@@ -11,20 +11,21 @@ import UIKit
 class EventNameTagsDetailsDateViewController: UIViewController {
     /* name vars */
     @IBOutlet weak var eventName: UITextField!
-    var name = String()
+    static var name = String()
     
     /* detail vars */
     @IBOutlet weak var eventDetails: UITextView! // details
-    var details = String()
+    static var details = String()
     
     /* tag vars */
     @IBOutlet weak var eventTags: UITextField!
     @IBOutlet weak var anothaOneButton: UIButton!
-    var textFields = [UITextField]()
+    static var textFields = [UITextField]()
     
     /* Date Vars */
     @IBOutlet weak var eventDate: UIDatePicker!
     @IBOutlet weak var formattedDate: UILabel!
+    static var date = String()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,7 +42,6 @@ class EventNameTagsDetailsDateViewController: UIViewController {
             let strDate = dateFormatter.stringFromDate(eventDate.date)
             self.formattedDate.text = strDate
         }
-        
     }
 
     override func didReceiveMemoryWarning() {
@@ -55,25 +55,46 @@ class EventNameTagsDetailsDateViewController: UIViewController {
     }
     
     /* SUBMIT METHODS */
+    
     @IBAction func submitName(sender: AnyObject) {
+        if self.eventName.text!.isEmpty {
+            let alert = UIAlertController(title: nil, message: "You still need to add a Name!", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { (action) -> Void in
+                // ...
+            }))
+            self.presentViewController(alert, animated: true, completion: nil)
+            return
+        }
+        
+        EventNameTagsDetailsDateViewController.name = self.eventName.text!
+        
         // go back to create event menu
         navigationController?.popViewControllerAnimated(true)
     }
     
     @IBAction func submitDetails(sender: AnyObject) {
-        print("details")
+        if self.eventDetails.text!.isEmpty {
+            let alert = UIAlertController(title: nil, message: "You haven't added a description!", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { (action) -> Void in
+                // ...
+            }))
+            self.presentViewController(alert, animated: true, completion: nil)
+            return
+        }
+        
+        EventNameTagsDetailsDateViewController.details = self.eventDetails.text!
         
         // go back to create event menu
         navigationController?.popViewControllerAnimated(true)
     }
     
     @IBAction func submitTags(sender: AnyObject) {
-        print("tags")
+        // go back to create event menu
         navigationController?.popViewControllerAnimated(true)
     }
     
     @IBAction func submitDate(sender: AnyObject) {
-        print("Date")
+        EventNameTagsDetailsDateViewController.date = self.formattedDate.text!
         navigationController?.popViewControllerAnimated(true)
     }
 
@@ -120,7 +141,7 @@ class EventNameTagsDetailsDateViewController: UIViewController {
         
         self.view.addSubview(textField)
         self.view.addSubview(label)
-        self.textFields.append(textField)
+        EventNameTagsDetailsDateViewController.textFields.append(textField)
     }
     /*
     // MARK: - Navigation

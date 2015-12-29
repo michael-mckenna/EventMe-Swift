@@ -109,9 +109,9 @@ class CreateEventViewController: UIViewController, CLLocationManagerDelegate, UI
         
         if gestureRecognizer.state == UIGestureRecognizerState.Began {
             
-            var touchPoint = gestureRecognizer.locationInView(self.map)
-            var newCoordinate = self.map.convertPoint(touchPoint, toCoordinateFromView: self.map)
-            var location = CLLocation(latitude: newCoordinate.latitude, longitude: newCoordinate.longitude)
+            let touchPoint = gestureRecognizer.locationInView(self.map)
+            let newCoordinate = self.map.convertPoint(touchPoint, toCoordinateFromView: self.map)
+            let location = CLLocation(latitude: newCoordinate.latitude, longitude: newCoordinate.longitude)
             
             CLGeocoder().reverseGeocodeLocation(location, completionHandler: { (placemarks, error) -> Void in
                 
@@ -138,7 +138,7 @@ class CreateEventViewController: UIViewController, CLLocationManagerDelegate, UI
                 
                 print(title)
                 
-                var annotation = MKPointAnnotation()
+                let annotation = MKPointAnnotation()
                 annotation.coordinate = newCoordinate
                 annotation.title = title
                 self.map.addAnnotation(annotation)
@@ -150,14 +150,14 @@ class CreateEventViewController: UIViewController, CLLocationManagerDelegate, UI
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
         //deleted 'as [CLLocation]'
-        var userLocation:CLLocation = locations[0]
-        var latitude = userLocation.coordinate.latitude
-        var longitude = userLocation.coordinate.longitude
-        var coordinate = CLLocationCoordinate2DMake(latitude, longitude)
-        var latDelta:CLLocationDegrees = 0.01
-        var lonDelta:CLLocationDegrees = 0.01
-        var span:MKCoordinateSpan = MKCoordinateSpanMake(latDelta, lonDelta)
-        var region:MKCoordinateRegion = MKCoordinateRegionMake(coordinate, span)
+        let userLocation:CLLocation = locations[0]
+        let latitude = userLocation.coordinate.latitude
+        let longitude = userLocation.coordinate.longitude
+        let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
+        let latDelta:CLLocationDegrees = 0.01
+        let lonDelta:CLLocationDegrees = 0.01
+        let span:MKCoordinateSpan = MKCoordinateSpanMake(latDelta, lonDelta)
+        let region:MKCoordinateRegion = MKCoordinateRegionMake(coordinate, span)
         
         self.thisLat = userLocation.coordinate.latitude
         self.thisLong = userLocation.coordinate.longitude
@@ -197,19 +197,15 @@ class CreateEventViewController: UIViewController, CLLocationManagerDelegate, UI
         
         //alertdialog first to check if fields are blank
         if self.nameInput.text!.isEmpty || self.descriptionInput.text.isEmpty || self.tagsInput.text!.isEmpty {
-            let alert = UIAlertView()
-            alert.title = "Error"
-            alert.message = "One or more fields were left blank!"
-            alert.addButtonWithTitle("OK")
-            alert.show()
+            // alert controller
             return
         }
         
-        var point = PFGeoPoint(latitude: 0.0, longitude: 0.0)
+        let point = PFGeoPoint(latitude: 0.0, longitude: 0.0)
         point.latitude = self.thisLat
         point.longitude = self.thisLong
         
-        var event = PFObject(className: "Event")
+        let event = PFObject(className: "Event")
         
         event["eventName"] = self.nameInput.text
         event["eventDescription"] = self.descriptionInput.text

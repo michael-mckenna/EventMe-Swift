@@ -14,7 +14,7 @@ class EventImageViewController: UIViewController, UIImagePickerControllerDelegat
     @IBOutlet var imageView: UIImageView!
     
     var imagePicker: UIImagePickerController!
-    var image = UIImage?()
+    static var image = UIImage?()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,9 +52,9 @@ class EventImageViewController: UIViewController, UIImagePickerControllerDelegat
     //function called once a photo is taken/chosen
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         imagePicker.dismissViewControllerAnimated(true, completion: nil)
-        self.image = info[UIImagePickerControllerOriginalImage] as? UIImage
-        self.imageView.image = resizeImage(self.image!, newWidth: 200)
-        self.image = self.imageView.image
+        EventImageViewController.image = info[UIImagePickerControllerOriginalImage] as? UIImage
+        self.imageView.image = resizeImage(EventImageViewController.image!, newWidth: 200)
+        EventImageViewController.image = self.imageView.image
         //self.imageView.contentMode = .ScaleAspectFit
     }
     

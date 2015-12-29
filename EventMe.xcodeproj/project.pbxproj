@@ -67,6 +67,7 @@
 		4C60AED71C2E303F009D7945 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C60AED61C2E303F009D7945 /* FBSDKCoreKit.framework */; };
 		4CA6F3BE1C27DB6900D3918F /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA6F3BD1C27DB6900D3918F /* SettingsViewController.swift */; };
 		4CA6F3C21C2872B900D3918F /* FeedCustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA6F3C11C2872B900D3918F /* FeedCustomCell.swift */; };
+		CB3495C91C32432500CB90AE /* NewEventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB3495C81C32432500CB90AE /* NewEventTableViewController.swift */; };
 		CBAC0C321C2F915F00C86EED /* EventImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAC0C311C2F915F00C86EED /* EventImageViewController.swift */; };
 		CBAC0C361C2F918000C86EED /* EventLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAC0C351C2F918000C86EED /* EventLocationViewController.swift */; };
 		CBAC0C381C2F9E1400C86EED /* EventNameTagsDetailsDateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAC0C371C2F9E1400C86EED /* EventNameTagsDetailsDateViewController.swift */; };
@@ -157,6 +158,7 @@
 		4C60AED61C2E303F009D7945 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
 		4CA6F3BD1C27DB6900D3918F /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		4CA6F3C11C2872B900D3918F /* FeedCustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedCustomCell.swift; sourceTree = "<group>"; };
+		CB3495C81C32432500CB90AE /* NewEventTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewEventTableViewController.swift; sourceTree = "<group>"; };
 		CBAC0C311C2F915F00C86EED /* EventImageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventImageViewController.swift; sourceTree = "<group>"; };
 		CBAC0C351C2F918000C86EED /* EventLocationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventLocationViewController.swift; sourceTree = "<group>"; };
 		CBAC0C371C2F9E1400C86EED /* EventNameTagsDetailsDateViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventNameTagsDetailsDateViewController.swift; sourceTree = "<group>"; };
@@ -329,6 +331,7 @@
 				CBAC0C351C2F918000C86EED /* EventLocationViewController.swift */,
 				CBAC0C371C2F9E1400C86EED /* EventNameTagsDetailsDateViewController.swift */,
 				CBEF07241C2FAA4C00FAA5F6 /* EventCreator.swift */,
+				CB3495C81C32432500CB90AE /* NewEventTableViewController.swift */,
 			);
 			name = "New Event Creation";
 			sourceTree = "<group>";
@@ -491,6 +494,7 @@
 				CBEF07251C2FAA4C00FAA5F6 /* EventCreator.swift in Sources */,
 				4CA6F3C21C2872B900D3918F /* FeedCustomCell.swift in Sources */,
 				4C4106D91C2504F600CF686E /* AppDelegate.swift in Sources */,
+				CB3495C91C32432500CB90AE /* NewEventTableViewController.swift in Sources */,
 				4C16B3771C2C46A300971665 /* TagsCustomCell.swift in Sources */,
 				4C4107341C27987200CF686E /* FavoritesViewController.swift in Sources */,
 				CBAC0C321C2F915F00C86EED /* EventImageViewController.swift in Sources */,
