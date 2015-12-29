@@ -33,22 +33,22 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
         user.password = self.password.text
         
         if self.username.text!.isEmpty || self.password.text!.isEmpty {
-            let alert = UIAlertView()
-            alert.title = "Error"
-            alert.message = "One or more fields were left blank!"
-            alert.addButtonWithTitle("OK")
-            alert.show()
+            let alert = UIAlertController(title: nil, message: "One or more fields were left empty!", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { (action) -> Void in
+                // ...
+            }))
+            self.presentViewController(alert, animated: true, completion: nil)
             return
         }
         
         user.signUpInBackgroundWithBlock {
             (succeeded: Bool, error: NSError?) -> Void in
             if let error = error {
-                let alert = UIAlertView()
-                alert.title = "Error"
-                alert.message = "There was an unknown error. Please try again"
-                alert.addButtonWithTitle("OK")
-                alert.show()
+                let alert = UIAlertController(title: nil, message: "There was an unknown error", preferredStyle: .Alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { (action) -> Void in
+                    // ...
+                }))
+                self.presentViewController(alert, animated: true, completion: nil)
                 return
                 
             } else {
