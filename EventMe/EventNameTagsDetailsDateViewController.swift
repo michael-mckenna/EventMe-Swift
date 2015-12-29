@@ -42,6 +42,7 @@ class EventNameTagsDetailsDateViewController: UIViewController {
             let strDate = dateFormatter.stringFromDate(eventDate.date)
             self.formattedDate.text = strDate
         }
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -89,6 +90,8 @@ class EventNameTagsDetailsDateViewController: UIViewController {
     }
     
     @IBAction func submitTags(sender: AnyObject) {
+        EventNameTagsDetailsDateViewController.textFields.append(self.eventTags)
+        
         // go back to create event menu
         navigationController?.popViewControllerAnimated(true)
     }
@@ -98,6 +101,8 @@ class EventNameTagsDetailsDateViewController: UIViewController {
         navigationController?.popViewControllerAnimated(true)
     }
 
+    
+    /* Functions */
     
     // updates the date picker
     @IBAction func datePickerChanged(sender: AnyObject) {

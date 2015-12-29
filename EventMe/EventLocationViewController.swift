@@ -39,13 +39,49 @@ class EventLocationViewController: UIViewController {
     }
     
     @IBAction func alrightPressed(sender: AnyObject) {
+        view.endEditing(true)
+        
+        if street.text!.isEmpty || city.text!.isEmpty || state.text!.isEmpty {
+            let alert = UIAlertController(title: nil, message: "One or more fields were left empty!", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { (action) -> Void in
+                // ...
+            }))
+            self.presentViewController(alert, animated: true, completion: nil)
+            return
+        }
+        
+        let streetStr = self.street.text! + ", "
+        let cityStr = self.city.text! + ", "
+        let stateStr = self.state.text!
+        
+        let address = streetStr + cityStr + stateStr
+        
+        let geocoder = CLGeocoder()
+        
+        geocoder.geocodeAddressString(address, completionHandler: {(placemarks, error) -> Void in
+            
+            if((error) != nil){
+                print("Invalid Address: " + address)
+            }
+            
+            // zoom map
+            if let placemark = placemarks?.first {
+                
+                let coordinates:CLLocationCoordinate2D = placemark.location!.coordinate
+                let location = CLLocation(coordinate: coordinates, altitude: 0, horizontalAccuracy: 0, verticalAccuracy: 0, timestamp: NSDate())
+                
+                // set class variable
+                EventLocationViewController.eventLocation = location
+            }
+        })
+        
         navigationController?.popViewControllerAnimated(true)
     }
 
     @IBAction func checkLocation(sender: AnyObject) {
         view.endEditing(true)
         
-        if street.text!.isEmpty || city.text!.isEmpty || state.text!.isEmpty || zip.text!.isEmpty {
+        if street.text!.isEmpty || city.text!.isEmpty || state.text!.isEmpty {
             let alert = UIAlertController(title: nil, message: "One or more fields were left empty!", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { (action) -> Void in
                 // ...

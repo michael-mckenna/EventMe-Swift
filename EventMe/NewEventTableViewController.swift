@@ -32,11 +32,37 @@ class NewEventTableViewController: UITableViewController {
         return 6
     }
 
+    // send event to parse
     @IBAction func submitEvent(sender: UIBarButtonItem) {
         
-        /* Submit to parse */
+        /* check that values have been updated before submission */
+        
+        // name, details, tags, date
+        if EventNameTagsDetailsDateViewController.name.isEmpty || EventNameTagsDetailsDateViewController.details.isEmpty || EventNameTagsDetailsDateViewController.textFields.count == 0 ||
+            EventNameTagsDetailsDateViewController.date.isEmpty {
+                
+            let alert = UIAlertController(title: nil, message: "You still have things to do!", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { (action) -> Void in
+                // ...
+            }))
+            self.presentViewController(alert, animated: true, completion: nil)
+            return
+        }
+        
+        // location
+        if EventLocationViewController.eventLocation.coordinate.latitude == 0 ||
+            EventLocationViewController.eventLocation.coordinate.longitude == 0 {
+                let alert = UIAlertController(title: nil, message: "Please set a valid location!", preferredStyle: .Alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { (action) -> Void in
+                    // ...
+                }))
+                self.presentViewController(alert, animated: true, completion: nil)
+                return
+        }
+        
+        // set up event for submission
         let event = PFObject(className: "Event")
-
+        
         event["eventName"] = EventNameTagsDetailsDateViewController.name
         event["eventDescription"] = EventNameTagsDetailsDateViewController.details
         event["eventDate"] = EventNameTagsDetailsDateViewController.date
@@ -44,8 +70,8 @@ class NewEventTableViewController: UITableViewController {
         // getting tag data
         let length = EventNameTagsDetailsDateViewController.textFields.count
         for var i = 0; i < length; i++ {
-            // TODO: update the tags
-            let tagName = EventNameTagsDetailsDateViewController.textFields[i].text
+            // TODO: update parse tag data
+            print(EventNameTagsDetailsDateViewController.textFields[i].text)
         }
         
         // getting location data
@@ -54,12 +80,48 @@ class NewEventTableViewController: UITableViewController {
         event["eventLocation"] = point
         event["votes"] = 0
         
-        //getting image data ready
+        // no image included
+        if EventImageViewController.image == UIImage?() {
+            print("IM here")
+            let alert = UIAlertController(title: nil, message: "Are you sure you don't want to include an image?", preferredStyle: .Alert)
+            
+            alert.addAction(UIAlertAction(title: "Yep!", style: .Default, handler: { (action) -> Void in
+                
+                /* Submit to parse without image */
+                event.saveInBackgroundWithBlock { (success: Bool, error: NSError?) -> Void in
+                    if(success) {
+                        self.activityIndicator.stopAnimating()
+                        UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                        print("Successfully saved event\n")
+                        self.navigationController?.popToRootViewControllerAnimated(true)
+                        
+                        // reset objects
+                        EventNameTagsDetailsDateViewController.name = String()
+                        EventNameTagsDetailsDateViewController.details = String()
+                        EventNameTagsDetailsDateViewController.textFields = [UITextField]()
+                        EventNameTagsDetailsDateViewController.date = String()
+                        EventLocationViewController.eventLocation = CLLocation()
+                    }
+                }
+            }))
+            
+            alert.addAction(UIAlertAction(title: "Wait! Go Back!", style: .Default, handler: { (action) -> Void in
+            
+            }))
+            
+            self.presentViewController(alert, animated: true, completion: nil)
+            return
+        }
+        
+        /* Submit to parse with image */
+        print("IM STILL GOIN BITCH")
+        // getting image data ready
         if let imageData = UIImagePNGRepresentation(EventImageViewController.image!) {
             let imageFile: PFFile!
             imageFile = PFFile(name: "image.png", data: imageData)
             event["eventImage"] = imageFile
         }
+        
         
         event.saveInBackgroundWithBlock { (success: Bool, error: NSError?) -> Void in
             if(success) {
@@ -67,6 +129,14 @@ class NewEventTableViewController: UITableViewController {
                 UIApplication.sharedApplication().endIgnoringInteractionEvents()
                 print("Successfully saved event\n")
                 self.navigationController?.popToRootViewControllerAnimated(true)
+                
+                // reset objects
+                EventNameTagsDetailsDateViewController.name = String()
+                EventNameTagsDetailsDateViewController.details = String()
+                EventNameTagsDetailsDateViewController.textFields = [UITextField]()
+                EventImageViewController.image = UIImage?()
+                EventNameTagsDetailsDateViewController.date = String()
+                EventLocationViewController.eventLocation = CLLocation()
             }
         }
         
