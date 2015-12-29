@@ -7,26 +7,25 @@
 //
 import UIKit
 import Parse
-import MapKit
-import CoreLocation
+import GoogleMaps
 
-class CreateEventViewController: UIViewController, CLLocationManagerDelegate, UITextViewDelegate, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class CreateEventViewController: UIViewController, UITextViewDelegate, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     @IBOutlet weak var nameInput: UITextField!
     @IBOutlet weak var descriptionInput: UITextView!
     @IBOutlet weak var tagsInput: UITextField!
-    @IBOutlet weak var addressLabel: UILabel!
-    @IBOutlet var map: MKMapView!
     @IBOutlet weak var imageView: UIImageView!
 
     var thisLong = 0.0
     var thisLat = 0.0
-    var manager: CLLocationManager!
     var imagePicker: UIImagePickerController!
     var image = UIImage?()
     var activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
     var strLabel = UILabel()
     var messageFrame = UIView()
+    var placePicker: GMSPlacePicker?
+    var myLocation: PFGeoPoint!
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,22 +37,23 @@ class CreateEventViewController: UIViewController, CLLocationManagerDelegate, UI
         //setting up the image picker
         self.imagePicker =  UIImagePickerController()
         self.imagePicker.delegate = self
-        
-        // Do any additional setup after loading the view, typically from a nib.
-        manager = CLLocationManager()
-        manager.delegate = self
-        manager.desiredAccuracy = kCLLocationAccuracyBest
-        manager.requestWhenInUseAuthorization()
-        manager.startUpdatingLocation()
-
-        var uilpgr = UILongPressGestureRecognizer(target: self, action: "action:")
-        uilpgr.minimumPressDuration = 1.0
-        map.addGestureRecognizer(uilpgr)
+       
+        //gets user's current location via Parse API's GeoPoint
+        PFGeoPoint.geoPointForCurrentLocationInBackground {
+            (geoPoint: PFGeoPoint?, error: NSError?) -> Void in
+            if error == nil {
+                self.thisLat = geoPoint!.latitude
+                self.thisLong = geoPoint!.longitude
+            } else {
+                print("Error retreiving current location")
+            }
+        }
         
     }
-    
+
         @IBAction func showAction(sender: AnyObject) {
             
+            //actions sheet for photo options
             let alert = UIAlertController(title: "Photo Source", message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
             
             alert.addAction(UIAlertAction(title: "Photo", style: .Default, handler: { (action) -> Void in
@@ -103,89 +103,6 @@ class CreateEventViewController: UIViewController, CLLocationManagerDelegate, UI
         UIGraphicsEndImageContext()
         
         return newImage
-    }
-    
-    func action(gestureRecognizer:UIGestureRecognizer) {
-        
-        if gestureRecognizer.state == UIGestureRecognizerState.Began {
-            
-            var touchPoint = gestureRecognizer.locationInView(self.map)
-            var newCoordinate = self.map.convertPoint(touchPoint, toCoordinateFromView: self.map)
-            var location = CLLocation(latitude: newCoordinate.latitude, longitude: newCoordinate.longitude)
-            
-            CLGeocoder().reverseGeocodeLocation(location, completionHandler: { (placemarks, error) -> Void in
-                
-                var title = ""
-                if (error == nil) {
-                    //if statement was changed
-                    if let p = placemarks?[0] {
-                        
-                        var subThoroughfare:String = ""
-                        var thoroughfare:String = ""
-                        
-                        if p.subThoroughfare != nil {
-                            subThoroughfare = p.subThoroughfare!
-                        }
-                        if p.thoroughfare != nil {
-                            thoroughfare = p.thoroughfare!
-                        }
-                        self.addressLabel.text = "\(subThoroughfare) \(thoroughfare)"
-                    }
-                }
-                if title.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet()) == "" {
-                    title = "Added \(NSDate())"
-                }
-                
-                print(title)
-                
-                var annotation = MKPointAnnotation()
-                annotation.coordinate = newCoordinate
-                annotation.title = title
-                self.map.addAnnotation(annotation)
-                
-            })
-        }
-    }
-    
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        
-        //deleted 'as [CLLocation]'
-        var userLocation:CLLocation = locations[0]
-        var latitude = userLocation.coordinate.latitude
-        var longitude = userLocation.coordinate.longitude
-        var coordinate = CLLocationCoordinate2DMake(latitude, longitude)
-        var latDelta:CLLocationDegrees = 0.01
-        var lonDelta:CLLocationDegrees = 0.01
-        var span:MKCoordinateSpan = MKCoordinateSpanMake(latDelta, lonDelta)
-        var region:MKCoordinateRegion = MKCoordinateRegionMake(coordinate, span)
-        
-        self.thisLat = userLocation.coordinate.latitude
-        self.thisLong = userLocation.coordinate.longitude
-       
-        CLGeocoder().reverseGeocodeLocation(userLocation, completionHandler: { (placemarks, error) -> Void in
-            
-            if (error != nil) {
-                
-                print(error)
-                
-            } else {
-                
-                if let p = placemarks?[0] {
-                    
-                    var subThoroughfare:String = ""
-                    
-                    if (p.subThoroughfare != nil) {
-                        
-                        subThoroughfare = p.subThoroughfare!
-                        
-                    }
-                    
-                    self.addressLabel.text = "\(subThoroughfare) \(p.thoroughfare!), \(p.locality!), \(p.administrativeArea!) \(p.postalCode!)"
-                }
-            }
-        })
-
-        self.map.setRegion(region, animated: true)
     }
     
     override func didReceiveMemoryWarning() {
@@ -257,6 +174,29 @@ class CreateEventViewController: UIViewController, CLLocationManagerDelegate, UI
         view.addSubview(messageFrame)
     }
     
+    @IBAction func addLocation(sender: AnyObject) {
+        let center = CLLocationCoordinate2DMake(self.thisLat, self.thisLong)
+        //defining rectangular bounds defining the initial rectangular area that the place picker's map must show
+        let northEast = CLLocationCoordinate2DMake(self.thisLat + 0.0001, self.thisLong + 0.0001)
+        let southWest = CLLocationCoordinate2DMake(self.thisLat - 0.001, self.thisLong - 0.001)
+        let viewport = GMSCoordinateBounds(coordinate: northEast, coordinate: southWest)
+        let config = GMSPlacePickerConfig(viewport: viewport)
+        placePicker = GMSPlacePicker(config: config)
+        placePicker?.pickPlaceWithCallback({ (place: GMSPlace?, error: NSError?) -> Void in
+            if let error = error {
+                print("Pick Place error: \(error.localizedDescription)")
+                return
+            }
+            
+            if let place = place {
+                print("Place name \(place.name)")
+                print("Place address \(place.formattedAddress)")
+                print("Place attributions \(place.attributions)")
+            } else {
+                print("No place selected")
+            }
+        })
+    }
     
     //closes keyboard when user touches outside of the keyboard
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {

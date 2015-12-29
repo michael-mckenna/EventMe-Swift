@@ -11,6 +11,7 @@ import Parse
 import UIKit
 import CoreData
 import CoreLocation
+import AVFoundation
 
 class FavoritesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CLLocationManagerDelegate, NSFetchedResultsControllerDelegate {
     
@@ -28,6 +29,8 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
     var managedObjectContext: NSManagedObjectContext? = nil
     var displayAble = false
     var voteObject = PFObject(className: "Event")
+    var showProgressFrame = true
+    var player: AVAudioPlayer!
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -64,9 +67,11 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
     func searchFavorites() {
         
         self.refresher.endRefreshing()
+        if showProgressFrame {
+            progressBarDisplayer("Finding favorites", true)
+        }
         
         if(currentUser != nil) {
-            progressBarDisplayer("Finding favorites", true)
             var favoritesRelation = currentUser?.relationForKey("favoriteEvents")
             var query = favoritesRelation?.query()
             query!.addDescendingOrder("votes")
@@ -87,7 +92,10 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
         
     func searchEvents() {
         
-        progressBarDisplayer("Finding favorites", true)
+        if showProgressFrame {
+            progressBarDisplayer("Finding favorites", true)
+        }
+
         var query = PFQuery(className: "Event")
         query.addDescendingOrder("votes")
         query.whereKey("eventLocation", nearGeoPoint: point, withinMiles: 5)
@@ -135,9 +143,20 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
     func refresh() {
         if currentUser != nil {
             searchFavorites()
+            
         } else {
             searchEvents()
         }
+        //refresh audio
+        let audioPath = NSBundle.mainBundle().pathForResource("Blop", ofType: "wav")!
+        do {
+            try player = AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: audioPath))
+            player.play()
+        } catch {
+            print("Error making player play")
+        }
+        
+        showProgressFrame = false
     }
     
     func progressBarDisplayer(msg:String, _ indicator:Bool ) {

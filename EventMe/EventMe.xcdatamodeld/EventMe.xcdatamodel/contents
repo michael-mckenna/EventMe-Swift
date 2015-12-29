@@ -6,11 +6,19 @@
         <attribute name="objectId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="upVoted" optional="YES" attributeType="Boolean" syncable="YES"/>
     </entity>
+    <entity name="FoodDeleted" syncable="YES">
+        <attribute name="foodDeleted" optional="YES" attributeType="Boolean" syncable="YES"/>
+    </entity>
+    <entity name="Notifications" syncable="YES">
+        <attribute name="turnedOn" optional="YES" attributeType="Boolean" syncable="YES"/>
+    </entity>
     <entity name="SavedTags" syncable="YES">
         <attribute name="tagName" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
         <element name="Events" positionX="-54" positionY="-9" width="128" height="105"/>
         <element name="SavedTags" positionX="-54" positionY="18" width="128" height="60"/>
+        <element name="Notifications" positionX="-45" positionY="27" width="128" height="60"/>
+        <element name="FoodDeleted" positionX="-27" positionY="36" width="128" height="60"/>
     </elements>
 </model>

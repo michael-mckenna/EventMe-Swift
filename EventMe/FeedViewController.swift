@@ -11,6 +11,7 @@ import UIKit
 import Parse
 import CoreLocation
 import CoreData
+import AVFoundation
 
 class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CLLocationManagerDelegate, NSFetchedResultsControllerDelegate  {
     
@@ -25,11 +26,13 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var point = PFGeoPoint()
     var currentUser = PFUser.currentUser()
     var displayAble = true
+    var showProgressFrame = true
     var refresher: UIRefreshControl!
     var activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
     var strLabel = UILabel()
     var messageFrame = UIView()
     var managedObjectContext: NSManagedObjectContext? = nil
+    var player: AVAudioPlayer!
     
 // make sure core data is synced with parse
     
@@ -72,11 +75,21 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
         }
 
-        
     }
     
     func refresh() {
+        
+        //refresh audio
+        let audioPath = NSBundle.mainBundle().pathForResource("Blop", ofType: "wav")!
+        do {
+            try player = AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: audioPath))
+            player.play()
+        } catch {
+            print("Error making player play")
+        }
+        
         displayAble = true
+        showProgressFrame = false
         manager.startUpdatingLocation()
     }
     
@@ -107,7 +120,10 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     func searchEvents() {
-        progressBarDisplayer("Searching Events", true)
+        
+        if showProgressFrame {
+            progressBarDisplayer("Searching Events", true)
+        }
         
         query.addDescendingOrder("votes")
         query.whereKey("eventLocation", nearGeoPoint: point, withinMiles: 5)

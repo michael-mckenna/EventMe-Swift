@@ -11,39 +11,129 @@ import UIKit
 import Parse
 import CoreData
 
-class PushViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, NSFetchedResultsControllerDelegate {
+class PushViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, NSFetchedResultsControllerDelegate {
     
     var currentUser = PFUser.currentUser()
-    var tagObjectArray = [PFObject]()
+    var tagObjectArray = [String]()
     var selectedCells = [Bool]()
+    var keepFood = false
     @IBOutlet weak var pushSwitch: UISwitch!
-    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var searchInput: UITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.tableView.dataSource = self
-        self.tableView.delegate = self
-        
-        if pushSwitch.on {
-            self.tableView.hidden = false
-            var query = PFQuery(className: "Tag")
-            query.addAscendingOrder("tagName")
-            query.findObjectsInBackgroundWithBlock({ (objects: [PFObject]?, error: NSError?) -> Void in
-                if error == nil {
-                    self.tagObjectArray = objects!
-                    for var i = 0; i < self.tagObjectArray.count; ++i {
-                        self.selectedCells.append(false)
+        //setting the state of the switch
+        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let context : NSManagedObjectContext = appDel.managedObjectContext
+        let request = NSFetchRequest(entityName: "Notifications")
+        request.returnsObjectsAsFaults = false
+        do {
+            let results = try context.executeFetchRequest(request)
+            if results.count == 0 {
+                let newObject: NSManagedObject = NSEntityDescription.insertNewObjectForEntityForName("Notifications", inManagedObjectContext: context)
+                newObject.setValue(false, forKey: "turnedOn")
+                do {
+                    try context.save()
+                } catch {
+                    print("Failed to save")
+                }
+            } else {
+                for value in results as! [NSManagedObject] {
+                    if value.valueForKey("turnedOn") as! Bool {
+                        self.pushSwitch.on = true
+                    } else {
+                        self.pushSwitch.on = false
                     }
                 }
-            })
-            
-        } else {
-            self.tableView.hidden = true
-        
+            }
+        } catch {
+            print("failed to fetch core data")
         }
         
+        //handling the entity for the user's choice to keep the default tag
+        let foodRequest = NSFetchRequest(entityName: "FoodDeleted")
+        foodRequest.returnsObjectsAsFaults = false
+        do {
+            let results = try context.executeFetchRequest(foodRequest)
+            if results.count == 0 {
+                let newObject: NSManagedObject = NSEntityDescription.insertNewObjectForEntityForName("FoodDeleted", inManagedObjectContext: context)
+                newObject.setValue(true, forKey: "keepDeleted")
+                do {
+                    try context.save()
+                } catch {
+                    print("Failed to initialized deleted attribute")
+                }
+            } else {
+                for value in results as! [NSManagedObject] {
+                    if value.valueForKey("keepDeleted") as! Bool == true {
+                        keepFood = true
+                    } else {
+                        keepFood = false
+                    }
+                }
+            }
+        } catch {
+            print("Failed to fetch core data for FoodDeleted")
+        }
+        
+        //filling table view with saved tags; defaults to a single one for "#food"
+        let newRequest = NSFetchRequest(entityName: "SavedTags")
+        newRequest.returnsObjectsAsFaults = false
+        do {
+            let results = try context.executeFetchRequest(newRequest)
+            if results.count > 0 {
+                for value in results as! [NSManagedObject] {
+                    tagObjectArray.append(value.valueForKey("tagName") as! String)
+                }
+            } else if results.count == 0 {
+                
+                //check if the user deleted the #food notifications preference
+                if keepFood {
+                    newRequest.predicate = NSPredicate(format: "tagName = %@", "#food")
+                    do{
+                        //adding #food into core data if it hasn't been added already
+                        let newResults = try context.executeFetchRequest(newRequest)
+                        if newResults.count == 0 {
+                            let addTag: NSManagedObject = NSEntityDescription.insertNewObjectForEntityForName("SavedTags", inManagedObjectContext: context)
+                            addTag.setValue("#food", forKey: "tagName")
+                            do {
+                                try context.save()
+                            } catch {
+                                print("failed to save #food")
+                            }
+                            tagObjectArray.append("#food")
+                        } else {
+                            tagObjectArray.append("#food")
+                        }
+                    }
+                }
+            }
+        } catch {
+            print("Error fetching core data")
+        }
+        
+        //query for all parse tags
+        let query = PFQuery()
+        //
      
+    }
+    
+    @available(iOS 2.0, *)
+    public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        return tagObjectArray.count
+    }
+
+    @available(iOS 2.0, *)
+    public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+         let cellToReturn = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! TagsCustomCell
+        
+        return cellToReturn
+    }
+    
+    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+
     }
     
     override func didReceiveMemoryWarning() {
@@ -51,111 +141,40 @@ class PushViewController: UIViewController, UITableViewDelegate, UITableViewData
         // Dispose of any resources that can be recreated.
     }
     
-    
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        // Return the number of sections.
-        return 1
-    }
 
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // Return the number of rows in the section.
-        
-        return tagObjectArray.count
-    }
-
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        guard let cell: TagsCustomCell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as? TagsCustomCell else {
-            fatalError(("unexpected cell dequeued from tableView"))
-        }
-        
-        var object = tagObjectArray[indexPath.row]
-        
-        cell.tagName.text = object["tagName"] as! String
-        
-        if cell.selected
-        {
-            cell.accessoryType = UITableViewCellAccessoryType.Checkmark
-        }
-        else
-        {
-            cell.accessoryType = UITableViewCellAccessoryType.None
-        }
-        
-
-        return cell
-    }
-    
-    
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
-    {
-        let cell = tableView.cellForRowAtIndexPath(indexPath)
-
-        if cell!.selected
-        {
-            cell!.selected = false
-            if cell!.accessoryType == UITableViewCellAccessoryType.None
-            {
-                cell!.accessoryType = UITableViewCellAccessoryType.Checkmark
-            }
-            else
-            {
-                cell!.accessoryType = UITableViewCellAccessoryType.None
-            }
-        }
-    }
-
-
-    
     @IBAction func save(sender: AnyObject) {
-        for var i = 0; i < tagObjectArray.count; ++i {
-            var cell = tableView.cellForRowAtIndexPath(NSIndexPath(forRow: i, inSection: 1))
-            if(cell?.selected == true) {
-                //save preffed tagname in core data
-                // setting up required core data components
-                var object = self.tagObjectArray[i]
-                let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-                let context : NSManagedObjectContext = appDel.managedObjectContext
-                let request = NSFetchRequest(entityName: "SavedTags")
-                request.returnsObjectsAsFaults = false
-                request.predicate = NSPredicate(format: "tagName = %@", object["tagName"] as! String)
-                do {
-                     print("got here")
-                    let results = try context.executeFetchRequest(request)
-                    if results.count == 0 {
-                         print("got here")
-                    let newObject: NSManagedObject = NSEntityDescription.insertNewObjectForEntityForName("SavedTags", inManagedObjectContext: context)
-                        newObject.setValue(object["tagName"] as! String, forKey: "tagName")
-                        //TODO: save context!
-                        print("Saved tag \(object["tagName"] as! String)")
-                    }
-                } catch {
-                    print("Error searching core data")
-                }
-            } else {
-                print("No selected")
-            }
-        }
+        //save selection from search
+        //have pop up saying "You added '#blah' to your notifications preferences
+        
+        self.navigationController?.popToRootViewControllerAnimated(true)
     }
+    
+    
 
     @IBAction func pushSwitch(sender: AnyObject) {
-        if pushSwitch.on {
-            self.tableView.hidden = false
-            
-            var query = PFQuery(className: "Tag")
-            query.addAscendingOrder("tagName")
-            query.findObjectsInBackgroundWithBlock({ (objects: [PFObject]?, error: NSError?) -> Void in
-                if error == nil {
-                    self.tagObjectArray = objects!
-                    self.tableView.reloadData()
-                } else {
-                    print("Error")
+        
+            let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            let context : NSManagedObjectContext = appDel.managedObjectContext
+            let request = NSFetchRequest(entityName: "Notifications")
+            request.returnsObjectsAsFaults = false
+            do {
+                let results = try context.executeFetchRequest(request)
+                for value in results as! [NSManagedObject] {
+                    if self.pushSwitch.on {
+                        value.setValue(true, forKey: "turnedOn")
+                    } else {
+                        value.setValue(false, forKey: "turnedOn")
+                    }
                 }
-            })
-        } else {
-            self.tableView.hidden = true
-        }
+            }catch {
+                print("failed to fetch core data")
+            }
+
     }
     
+    @IBAction func addTag(sender: AnyObject) {
+        
+    }
     
     
     

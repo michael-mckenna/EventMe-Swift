@@ -12,6 +12,7 @@ import Parse
 import Bolts
 import FBSDKCoreKit
 import ParseFacebookUtilsV4
+import GoogleMaps
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -35,33 +36,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //facebook integration initialization
         PFFacebookUtils.initializeFacebookWithApplicationLaunchOptions(launchOptions)
         
-        //Setting up Parse Notifications
-        let settings = UIUserNotificationSettings(forTypes: [.Alert, .Sound, .Badge], categories: nil)
-        UIApplication.sharedApplication().registerUserNotificationSettings(settings)
-        UIApplication.sharedApplication().registerForRemoteNotifications()
+        //setting up google api for the PlacePicker
+        GMSServices.provideAPIKey("AIzaSyBko1XltC2n9FEFv7WsgfOSRB9LpYKXbaQ")
+        
         return true
     }
-    
-    /*PFInstallation.currentInstallation() represents the current device. We save within it user's unique
-        device token that is provided by the iOS to the app, which APNS will use to send push to the right device. We also save the current user
-        within it to be able to distinguish the installation against other users' installations.*/
-    func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
-        // Store the deviceToken in the current Installation and save it to Parse
-        let installation = PFInstallation.currentInstallation()
-        installation.setDeviceTokenFromData(deviceToken)
-        installation.saveInBackground()
-    }
-    
-    func application(application: UIApplication,
-        openURL url: NSURL,
-        sourceApplication: String?,
-        annotation: AnyObject?) -> Bool {
-            return FBSDKApplicationDelegate.sharedInstance().application(application,
-                openURL: url,
-                sourceApplication: sourceApplication,
-                annotation: annotation)
-    }
-
 
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
